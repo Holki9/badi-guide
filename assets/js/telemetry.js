@@ -1,9 +1,9 @@
 /**
- * СИСТЕМА КОНТРОЛЯ И ИДЕНТИФИКАЦИИ УЗЛОВ ДОСТУПА «КОНТУР-ТЕЛЕМЕТРИЯ» v5.1
- * Полный аппаратно-сетевой аудит клиентского терминала.
+ * КОНТУР-ТЕЛЕМЕТРИЯ v5.3 // ЧИСТЫЙ ТЕРМИНАЛЬНЫЙ РЕЖИМ
+ * Полный аппаратно-сетевой аудит узла доступа с анимацией печати и прогресс-баром.
  */
 
-// 1. Звуковой синтезатор на Web Audio API (без внешних файлов)
+// 1. Звуковой синтезатор на Web Audio API
 class CyberAudio {
   constructor() {
     this.ctx = null;
@@ -19,56 +19,37 @@ class CyberAudio {
     }
   }
 
-  playBeep(freq = 880, duration = 0.05, type = 'sine') {
+  click() {
     try {
       this.init();
       if (!this.ctx) return;
       const osc = this.ctx.createOscillator();
       const gain = this.ctx.createGain();
-      osc.type = type;
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(1400 + Math.random() * 400, this.ctx.currentTime);
+      gain.gain.setValueAtTime(0.02, this.ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 0.015);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start();
+      osc.stop(this.ctx.currentTime + 0.015);
+    } catch (e) {}
+  }
+
+  beep(freq = 880, dur = 0.04) {
+    try {
+      this.init();
+      if (!this.ctx) return;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = 'triangle';
       osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
-      gain.gain.setValueAtTime(0.06, this.ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + duration);
+      gain.gain.setValueAtTime(0.04, this.ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + dur);
       osc.connect(gain);
       gain.connect(this.ctx.destination);
       osc.start();
-      osc.stop(this.ctx.currentTime + duration);
-    } catch (e) {}
-  }
-
-  playSweep() {
-    try {
-      this.init();
-      if (!this.ctx) return;
-      const osc = this.ctx.createOscillator();
-      const gain = this.ctx.createGain();
-      osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(140, this.ctx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(720, this.ctx.currentTime + 0.16);
-      gain.gain.setValueAtTime(0.07, this.ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.18);
-      osc.connect(gain);
-      gain.connect(this.ctx.destination);
-      osc.start();
-      osc.stop(this.ctx.currentTime + 0.18);
-    } catch (e) {}
-  }
-
-  playAlarm() {
-    try {
-      this.init();
-      if (!this.ctx) return;
-      const osc = this.ctx.createOscillator();
-      const gain = this.ctx.createGain();
-      osc.type = 'square';
-      osc.frequency.setValueAtTime(440, this.ctx.currentTime);
-      osc.frequency.setValueAtTime(880, this.ctx.currentTime + 0.08);
-      gain.gain.setValueAtTime(0.05, this.ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.22);
-      osc.connect(gain);
-      gain.connect(this.ctx.destination);
-      osc.start();
-      osc.stop(this.ctx.currentTime + 0.22);
+      osc.stop(this.ctx.currentTime + dur);
     } catch (e) {}
   }
 }
@@ -77,496 +58,388 @@ const audio = new CyberAudio();
 window.addEventListener('click', () => audio.init(), { once: true });
 window.addEventListener('touchstart', () => audio.init(), { once: true });
 
-// Глобальный объект собранных данных
-const TelemetryDossier = {
+// Глобальное досье
+const Dossier = {
   session: {
     id: 'INC-' + Math.random().toString(36).substring(2, 7).toUpperCase() + '-' + Date.now().toString().slice(-4),
-    timestamp: new Date().toISOString(),
-    status: 'IN_PROGRESS'
+    timestamp: new Date().toISOString()
   },
   network: {},
-  tunnel: {},
   hardware: {},
   display: {},
   fingerprint: {}
 };
 
-// Вспомогательная функция хеширования строки (DJB2 / Murmur-lite)
-function computeStringHash(str) {
-  let hash1 = 5381;
-  let hash2 = 52711;
+// Хэш
+function hashString(str) {
+  let h1 = 5381, h2 = 52711;
   for (let i = 0; i < str.length; i++) {
-    const char = str.charCodeAt(i);
-    hash1 = (hash1 * 33) ^ char;
-    hash2 = (hash2 * 33) ^ char;
+    const ch = str.charCodeAt(i);
+    h1 = (h1 * 33) ^ ch;
+    h2 = (h2 * 33) ^ ch;
   }
-  return (Math.abs(hash1).toString(16) + Math.abs(hash2).toString(16)).toUpperCase();
+  return (Math.abs(h1).toString(16) + Math.abs(h2).toString(16)).toUpperCase();
 }
 
-// 2. Терминальный лог с эффектом печати
-const terminalEl = document.getElementById('terminalLogs');
-
-function logTerminal(message, type = 'info') {
-  if (!terminalEl) return;
-  const line = document.createElement('div');
-  line.className = `term-line term-${type}`;
-  const now = new Date();
-  const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}.${String(now.getMilliseconds()).padStart(3, '0')}`;
-  line.innerHTML = `<span class="term-time">[${timeStr}]</span> <span class="term-msg">${message}</span>`;
-  terminalEl.appendChild(line);
-  terminalEl.scrollTop = terminalEl.scrollHeight;
-  audio.playBeep(type === 'alert' ? 440 : 1200, 0.03);
-}
-
-// 3. Сбор WebRTC локального IP (STUN Candidate Leak)
-function detectWebRTCLocalIP() {
-  return new Promise((resolve) => {
-    try {
-      const RTCPC = window.RTCPeerConnection || window.webkitRTCPeerConnection || window.mozRTCPeerConnection;
-      if (!RTCPC) {
-        resolve({ localIp: 'Не поддерживается WebRTC', candidate: null });
-        return;
-      }
-
-      const pc = new RTCPC({
-        iceServers: [{ urls: 'stun:stun.l.google.com:19302' }, { urls: 'stun:stun1.l.google.com:19302' }]
-      });
-
-      let found = false;
-      pc.createDataChannel('');
-      pc.createOffer()
-        .then((offer) => pc.setLocalDescription(offer))
-        .catch(() => resolve({ localIp: 'Заблокировано sandbox', candidate: null }));
-
-      const timer = setTimeout(() => {
-        if (!found) {
-          pc.close();
-          resolve({ localIp: 'Защищено браузерным рандомизатором', candidate: null });
-        }
-      }, 2500);
-
-      pc.onicecandidate = (event) => {
-        if (event && event.candidate && event.candidate.candidate) {
-          const cand = event.candidate.candidate;
-          const match = cand.match(/([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})/);
-          if (match && match[1]) {
-            const ip = match[1];
-            if (!ip.startsWith('0.') && !ip.startsWith('127.')) {
-              found = true;
-              clearTimeout(timer);
-              pc.close();
-              resolve({ localIp: ip, candidate: cand });
-            }
-          }
-        }
-      };
-    } catch (e) {
-      resolve({ localIp: 'Изолировано (Sandbox Policy)', candidate: null });
-    }
-  });
-}
-
-// 4. Сбор аппаратных характеристик WebGL (видеокарта)
-function detectGPU() {
-  const result = {
-    renderer: 'Не определен',
-    vendor: 'Не определен',
-    webglVersion: 'Отключен',
-    extensionsCount: 0,
-    maxTextureSize: 'Н/Д'
-  };
-
+// 2. Детекторы аппаратуры
+function getGPU() {
+  const res = { renderer: 'Скрыто песочницей', vendor: 'Не определен' };
   try {
     const canvas = document.createElement('canvas');
     const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
     if (gl) {
-      result.webglVersion = gl.getParameter(gl.VERSION) || 'WebGL 1.0';
-      result.maxTextureSize = `${gl.getParameter(gl.MAX_TEXTURE_SIZE)} px`;
-      result.extensionsCount = (gl.getSupportedExtensions() || []).length;
-
-      const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
-      if (debugInfo) {
-        result.renderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) || 'Драйвер скрыт';
-        result.vendor = gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL) || 'Вендор скрыт';
-      } else {
-        result.renderer = gl.getParameter(gl.RENDERER) || 'Базовый рендерер';
-        result.vendor = gl.getParameter(gl.VENDOR) || 'Базовый вендор';
+      const dbg = gl.getExtension('WEBGL_debug_renderer_info');
+      if (dbg) {
+        res.renderer = gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) || 'Драйвер скрыт';
+        res.vendor = gl.getParameter(dbg.UNMASKED_VENDOR_WEBGL) || 'Вендор скрыт';
       }
     }
-  } catch (e) {
-    result.renderer = 'Аппаратный контекст заблокирован';
-  }
-
-  return result;
+  } catch (e) {}
+  return res;
 }
 
-// 5. Canvas Fingerprint
-function computeCanvasFingerprint() {
-  try {
-    const canvas = document.createElement('canvas');
-    canvas.width = 240;
-    canvas.height = 60;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return 'CTX_UNAVAILABLE';
-
-    ctx.textBaseline = 'top';
-    ctx.font = "14px 'Arial', 'Segoe UI', sans-serif";
-    ctx.textBaseline = 'alphabetic';
-    ctx.fillStyle = '#f60';
-    ctx.fillRect(125, 1, 62, 20);
-    ctx.fillStyle = '#069';
-    ctx.fillText('Контур-Аудит [ID:772]', 2, 15);
-    ctx.fillStyle = 'rgba(102, 204, 0, 0.7)';
-    ctx.fillText('Telemetry // 2026', 4, 35);
-
-    const dataUri = canvas.toDataURL();
-    return computeStringHash(dataUri);
-  } catch (e) {
-    return 'HASH_SANDBOXED';
-  }
-}
-
-// 6. AudioContext Fingerprint
-function computeAudioFingerprint() {
+function getWebRTCLocalIP() {
   return new Promise((resolve) => {
     try {
-      const OfflineCtx = window.OfflineAudioContext || window.webkitOfflineAudioContext;
-      if (!OfflineCtx) {
-        resolve('AUDIO_UNAVAILABLE');
-        return;
-      }
-
-      const context = new OfflineCtx(1, 44100, 44100);
-      const osc = context.createOscillator();
-      osc.type = 'triangle';
-      osc.frequency.setValueAtTime(10000, context.currentTime);
-
-      const compressor = context.createDynamicsCompressor();
-      compressor.threshold.setValueAtTime(-50, context.currentTime);
-      compressor.knee.setValueAtTime(40, context.currentTime);
-      compressor.ratio.setValueAtTime(12, context.currentTime);
-      compressor.attack.setValueAtTime(0, context.currentTime);
-      compressor.release.setValueAtTime(0.25, context.currentTime);
-
-      osc.connect(compressor);
-      compressor.connect(context.destination);
-      osc.start(0);
-
-      context.startRendering().then((buffer) => {
-        let sum = 0;
-        const channel = buffer.getChannelData(0);
-        for (let i = 4500; i < 5000; i++) {
-          sum += Math.abs(channel[i]);
+      const RTCPC = window.RTCPeerConnection || window.webkitRTCPeerConnection || window.mozRTCPeerConnection;
+      if (!RTCPC) return resolve('Не поддерживается WebRTC');
+      const pc = new RTCPC({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] });
+      let done = false;
+      pc.createDataChannel('');
+      pc.createOffer().then(o => pc.setLocalDescription(o)).catch(() => resolve('Заблокировано'));
+      const timer = setTimeout(() => {
+        if (!done) { pc.close(); resolve('Скрыто рандомизатором'); }
+      }, 2000);
+      pc.onicecandidate = (e) => {
+        if (e && e.candidate && e.candidate.candidate) {
+          const match = e.candidate.candidate.match(/([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})/);
+          if (match && match[1] && !match[1].startsWith('0.') && !match[1].startsWith('127.')) {
+            done = true;
+            clearTimeout(timer);
+            pc.close();
+            resolve(match[1]);
+          }
         }
-        resolve(computeStringHash('AUDIO_' + sum.toFixed(8)));
-      }).catch(() => resolve('AUDIO_RENDER_ERR'));
+      };
     } catch (e) {
-      resolve('AUDIO_MUTED');
+      resolve('Изолировано (Sandbox)');
     }
   });
 }
 
-// 7. Замер герцовки дисплея (FPS Benchmark)
-function benchmarkDisplayRefreshRate() {
+function getAudioHash() {
   return new Promise((resolve) => {
-    let frames = 0;
-    const start = performance.now();
-    function tick() {
-      frames++;
-      if (frames < 36) {
-        requestAnimationFrame(tick);
-      } else {
-        const delta = performance.now() - start;
-        const fps = Math.round((frames / delta) * 1000);
-        resolve(fps);
-      }
+    try {
+      const Ctx = window.OfflineAudioContext || window.webkitOfflineAudioContext;
+      if (!Ctx) return resolve('HASH_MUTED');
+      const ctx = new Ctx(1, 44100, 44100);
+      const osc = ctx.createOscillator();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(10000, ctx.currentTime);
+      const comp = ctx.createDynamicsCompressor();
+      osc.connect(comp);
+      comp.connect(ctx.destination);
+      osc.start(0);
+      ctx.startRendering().then((buf) => {
+        let sum = 0;
+        const ch = buf.getChannelData(0);
+        for (let i = 4500; i < 5000; i++) sum += Math.abs(ch[i]);
+        resolve(hashString('AUD_' + sum.toFixed(7)));
+      }).catch(() => resolve('HASH_ERR'));
+    } catch (e) {
+      resolve('HASH_SECURED');
     }
-    requestAnimationFrame(tick);
   });
 }
 
-// 8. Запрос публичного IP и геолокации через несколько провайдеров
-async function fetchNetworkGeo() {
-  // Провайдер 1: ipwho.is (богатая детальная телеметрия без ключа)
+function getCanvasHash() {
   try {
-    const res = await fetch('https://ipwho.is/?lang=ru', { cache: 'no-store' });
-    if (res.ok) {
-      const data = await res.json();
-      if (data.success !== false) {
+    const cvs = document.createElement('canvas');
+    cvs.width = 200; cvs.height = 40;
+    const ctx = cvs.getContext('2d');
+    if (!ctx) return 'CTX_ERR';
+    ctx.font = '14px monospace';
+    ctx.fillStyle = '#f60';
+    ctx.fillRect(100, 2, 50, 20);
+    ctx.fillStyle = '#069';
+    ctx.fillText('TRACE//2026', 2, 18);
+    return hashString(cvs.toDataURL());
+  } catch (e) {
+    return 'CVS_SANDBOX';
+  }
+}
+
+function getFPS() {
+  return new Promise((resolve) => {
+    let f = 0;
+    const t0 = performance.now();
+    function step() {
+      f++;
+      if (f < 30) requestAnimationFrame(step);
+      else resolve(Math.round((f / (performance.now() - t0)) * 1000));
+    }
+    requestAnimationFrame(step);
+  });
+}
+
+async function fetchGeo() {
+  try {
+    const r = await fetch('https://ipwho.is/?lang=ru', { cache: 'no-store' });
+    if (r.ok) {
+      const d = await r.json();
+      if (d.success !== false) {
         return {
-          ip: data.ip,
-          country: data.country,
-          countryCode: data.country_code,
-          region: data.region,
-          city: data.city,
-          postal: data.postal || 'Не указан',
-          latitude: data.latitude,
-          longitude: data.longitude,
-          isp: data.connection?.isp || data.connection?.org || 'Узел связи',
-          asn: data.connection?.asn ? `AS${data.connection.asn}` : 'Н/Д',
-          org: data.connection?.org || data.connection?.isp || 'Н/Д',
-          timezone: data.timezone?.id || 'Н/Д',
-          utcOffset: data.timezone?.utc || 'Н/Д'
+          ip: d.ip,
+          country: d.country,
+          region: d.region,
+          city: d.city,
+          lat: d.latitude,
+          lon: d.longitude,
+          isp: d.connection?.isp || 'Узел связи',
+          asn: d.connection?.asn ? `AS${d.connection.asn}` : 'Н/Д',
+          tz: d.timezone?.id || 'UTC'
         };
       }
     }
   } catch (e) {}
 
-  // Провайдер 2: ipapi.co (резервный)
   try {
-    const res = await fetch('https://ipapi.co/json/', { cache: 'no-store' });
-    if (res.ok) {
-      const data = await res.json();
-      return {
-        ip: data.ip,
-        country: data.country_name,
-        countryCode: data.country_code,
-        region: data.region,
-        city: data.city,
-        postal: data.postal || 'Не указан',
-        latitude: data.latitude,
-        longitude: data.longitude,
-        isp: data.org || 'Узел связи',
-        asn: data.asn || 'Н/Д',
-        org: data.org || 'Н/Д',
-        timezone: data.timezone || 'Н/Д',
-        utcOffset: data.utc_offset || 'Н/Д'
-      };
+    const r = await fetch('https://api64.ipify.org?format=json', { cache: 'no-store' });
+    if (r.ok) {
+      const d = await r.json();
+      return { ip: d.ip, country: 'Маршрутизировано', region: 'Шлюз', city: 'Транзит', lat: '0', lon: '0', isp: 'Сетевой оператор', asn: 'Н/Д', tz: 'Europe/Moscow' };
     }
   } catch (e) {}
 
-  // Провайдер 3: api64.ipify.org (только базовый IP)
-  try {
-    const res = await fetch('https://api64.ipify.org?format=json', { cache: 'no-store' });
-    if (res.ok) {
-      const data = await res.json();
-      return {
-        ip: data.ip,
-        country: 'Маршрутизация определена',
-        countryCode: 'XX',
-        region: 'Шлюз провайдера',
-        city: 'Транзитный узел',
-        postal: 'Н/Д',
-        latitude: '0.00',
-        longitude: '0.00',
-        isp: 'Пакетный оператор',
-        asn: 'Н/Д',
-        org: 'Транзитный шлюз',
-        timezone: 'Europe/Moscow',
-        utcOffset: '+03:00'
-      };
-    }
-  } catch (e) {}
-
-  return {
-    ip: '127.0.0.1 (Туннелировано)',
-    country: 'Неизвестно',
-    countryCode: 'XX',
-    region: 'Скрыто протоколом',
-    city: 'Прокси-узел',
-    postal: 'Н/Д',
-    latitude: 'Н/Д',
-    longitude: 'Н/Д',
-    isp: 'Шифрованный туннель',
-    asn: 'Н/Д',
-    org: 'Инкогнито',
-    timezone: 'UTC',
-    utcOffset: '+00:00'
-  };
+  return { ip: '127.0.0.1 (VPN Tunnel)', country: 'Неизвестно', region: 'Скрыто', city: 'Прокси-узел', lat: '0', lon: '0', isp: 'Шифрованный туннель', asn: 'Н/Д', tz: 'UTC' };
 }
 
-// 9. Полный запуск аудита и заполнение дашборда
-async function runFullTelemetryAudit() {
-  logTerminal('Инициализация сеанса криптографического аудита узла...', 'info');
-  audio.playSweep();
+// 3. Терминальный движок печати и прогресс-бара
+const container = document.getElementById('termOutput');
+let skipAnimation = false;
 
-  // Обновление идентификатора сессии
-  document.getElementById('metaSessionId').textContent = TelemetryDossier.session.id;
-  document.getElementById('metaTimestamp').textContent = new Date().toLocaleTimeString('ru-RU');
+window.addEventListener('click', () => { skipAnimation = true; });
+window.addEventListener('keydown', () => { skipAnimation = true; });
 
-  // 1. Аппаратный профиль GPU
-  logTerminal('Опрос графического ускорителя и шейдерного конвейера...', 'info');
-  const gpu = detectGPU();
-  TelemetryDossier.hardware.gpu = gpu;
-  document.getElementById('valGpuRenderer').textContent = gpu.renderer;
-  document.getElementById('valGpuVendor').textContent = gpu.vendor;
-  document.getElementById('valGpuTexture').textContent = gpu.maxTextureSize;
+function printLine(htmlText) {
+  const line = document.createElement('div');
+  line.className = 'term-line';
+  line.innerHTML = htmlText;
+  container.appendChild(line);
+  window.scrollTo(0, document.body.scrollHeight);
+  audio.click();
+}
 
-  // 2. ЦПУ и Память
-  const cores = navigator.hardwareConcurrency || 'Не определено';
-  const memory = navigator.deviceMemory ? `${navigator.deviceMemory} ГБ` : 'Защищено sandboxing';
-  TelemetryDossier.hardware.cores = cores;
-  TelemetryDossier.hardware.memory = memory;
-  document.getElementById('valCpuCores').textContent = `${cores} логических ядер`;
-  document.getElementById('valDeviceRam').textContent = memory;
+function delay(ms) {
+  if (skipAnimation) return Promise.resolve();
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
-  // 3. Батарея
-  if (navigator.getBattery) {
-    try {
-      const battery = await navigator.getBattery();
-      const level = Math.round(battery.level * 100);
-      const status = battery.charging ? 'Подключено к сети' : 'Автономное питание';
-      TelemetryDossier.hardware.battery = { level: `${level}%`, charging: battery.charging };
-      document.getElementById('valBattery').textContent = `${level}% (${status})`;
-      logTerminal(`Датчик питания: заряд ${level}%, статус: ${status}`, 'info');
-    } catch (e) {
-      document.getElementById('valBattery').textContent = 'Стационарный ПК / API скрыт';
-    }
-  } else {
-    document.getElementById('valBattery').textContent = 'Стационарный терминал (Сеть 220V)';
-  }
+// Генератор ASCII-прогрессбара: [████████████░░░░░░░░] 60%
+function makeAsciiBar(pct, totalChars = 26) {
+  const filled = Math.round((pct / 100) * totalChars);
+  const empty = totalChars - filled;
+  return '█'.repeat(filled) + '░'.repeat(empty);
+}
 
-  // 4. Дисплейная матрица и FPS
-  logTerminal('Калибровка разрешения матрицы и частоты развёртки...', 'info');
+// 4. Главная анимированная последовательность терминала
+async function runHackerTerminal() {
+  container.innerHTML = '';
+  skipAnimation = false;
+
+  printLine('<span class="c-cyan c-bold">>>> ИНИЦИАЛИЗАЦИЯ ШЛЮЗА ПРОВЕРКИ ПОДЛИННОСТИ СЕССИИ...</span>');
+  await delay(140);
+  printLine('<span class="c-dim">[OK] Загрузка криптографических таблиц ядра...</span>');
+  await delay(120);
+  printLine(`<span class="c-dim">[OK] Регистрация сеанса: </span><span class="c-white">${Dossier.session.id}</span>`);
+  await delay(160);
+
+  // Создаем динамический блок прогресс-бара
+  const progressBox = document.createElement('div');
+  progressBox.className = 'progress-container';
+  progressBox.innerHTML = `
+    <div id="progLabel" class="progress-label">СКАНИРОВАНИЕ АППАРАТНЫХ РЕГИСТРОВ...</div>
+    <div>
+      <span class="c-dim">[</span><span id="progBar" class="progress-bar-ascii">${makeAsciiBar(0)}</span><span class="c-dim">]</span>
+      <span id="progPct" class="progress-pct">0%</span>
+    </div>
+  `;
+  container.appendChild(progressBox);
+
+  const progLabel = document.getElementById('progLabel');
+  const progBar = document.getElementById('progBar');
+  const progPct = document.getElementById('progPct');
+
+  // Шаги прогресса параллельно со сбором данных
+  const updateProgress = async (pct, labelText) => {
+    if (progLabel) progLabel.textContent = labelText;
+    if (progBar) progBar.textContent = makeAsciiBar(pct);
+    if (progPct) progPct.textContent = `${pct}%`;
+    audio.click();
+    await delay(skipAnimation ? 10 : 80);
+  };
+
+  await updateProgress(12, 'ОПРОС ГРАФИЧЕСКОГО КОНТЕКСТА WEBGL & GPU...');
+  const gpu = getGPU();
+  Dossier.hardware.gpu = gpu;
+
+  await updateProgress(28, 'ИЗМЕРЕНИЕ РАЗРЕШЕНИЯ МАТРИЦЫ & БЕНЧМАРК FPS...');
   const dpr = window.devicePixelRatio || 1;
   const physW = Math.round(screen.width * dpr);
   const physH = Math.round(screen.height * dpr);
-  const colorDepth = screen.colorDepth || 24;
-  const touchPoints = navigator.maxTouchPoints || 0;
-  const touchType = touchPoints > 0 ? `Сенсорный (${touchPoints} точек)` : 'Курсор / Клавиатура';
+  const fps = await getFPS();
 
-  document.getElementById('valResolution').textContent = `${physW} × ${physH} px (Viewport: ${window.innerWidth}×${window.innerHeight})`;
-  document.getElementById('valDpr').textContent = `${dpr.toFixed(2)}x (${colorDepth}-bit HDR/SDR)`;
-  document.getElementById('valTouch').textContent = touchType;
+  await updateProgress(45, 'ПЕНЕТРАЦИЯ STUN-МАРШРУТА WebRTC (ПОИСК ЛОКАЛЬНОГО IP)...');
+  const localIp = await getWebRTCLocalIP();
+  Dossier.network.localIp = localIp;
 
-  benchmarkDisplayRefreshRate().then((fps) => {
-    TelemetryDossier.display.fps = `${fps} Hz`;
-    document.getElementById('valFps').textContent = `${fps} Hz (Кадровая синхронизация)`;
-    logTerminal(`Частота обновления дисплея: ${fps} кадр/сек`, 'info');
+  await updateProgress(62, 'ГЕНЕРАЦИЯ ЦИФРОВЫХ ХЭШЕЙ CANVAS2D & AUDIOCONTEXT...');
+  const canvasHash = getCanvasHash();
+  const audioHash = await getAudioHash();
+
+  await updateProgress(78, 'ЗАПРОС BGP-ТЕЛЕМЕТРИИ, ПУБЛИЧНОГО IP & АНАЛИЗ ISP...');
+  const geo = await fetchGeo();
+  Dossier.network.geo = geo;
+
+  // Опрос батареи
+  let batteryText = 'Стационарный терминал (Сеть 220V)';
+  if (navigator.getBattery) {
+    try {
+      const b = await navigator.getBattery();
+      batteryText = `${Math.round(b.level * 100)}% [${b.charging ? 'ЗАРЯДКА ОТ СЕТИ' : 'АВТОНОМНОЕ ПИТАНИЕ'}]`;
+    } catch (e) {}
+  }
+
+  await updateProgress(94, 'СВЕРКА СИСТЕМНОГО ВРЕМЕНИ И ГЕОЛОКАЦИОННОЙ ТАЙМЗОНЫ...');
+  const systemTz = Intl.DateTimeFormat().resolvedOptions().timeZone || 'Europe/Moscow';
+  const sysOffsetH = (-new Date().getTimezoneOffset()) / 60;
+  const sysOffsetStr = `UTC${sysOffsetH >= 0 ? '+' : ''}${sysOffsetH}`;
+
+  await updateProgress(100, 'АУДИТ УЗЛА ЗАВЕРШЕН. ФОРМИРОВАНИЕ ДОСЬЕ...');
+  audio.beep(1200, 0.08);
+  await delay(200);
+
+  // Выводим структурированный отчет в терминале
+  printLine('<div class="term-hr">================================================================================</div>');
+  printLine('<span class="c-cyan c-bold">РЕЗУЛЬТАТЫ СКВОЗНОГО АУДИТА ЦИФРОВОГО ПРОФИЛЯ УЗЛА СВЯЗИ</span>');
+  printLine('<span class="c-dim">СТАНДАРТ: ГОСТ Р ИСО/МЭК 27001 // СИСТЕМА КОНТУР-ТЕЛЕМЕТРИЯ v5.3</span>');
+  printLine('<div class="term-hr">================================================================================</div>');
+  await delay(120);
+
+  // Блок 1: Сеть и геолокация
+  printLine('<span class="c-white c-bold">[+] СЕТЕВОЙ МАРШРУТ И ГЕОЛОКАЦИЯ:</span>');
+  printLine(`  <span class="c-dim">• Внешний IPv4/IPv6:</span>     <span class="c-cyan c-bold">${geo.ip}</span>`);
+  printLine(`  <span class="c-dim">• Локальный IP (STUN):</span>   <span class="c-amber c-bold">${localIp}</span>`);
+  printLine(`  <span class="c-dim">• Оператор связи (ISP):</span>  <span class="c-white">${geo.isp} (${geo.asn})</span>`);
+  printLine(`  <span class="c-dim">• Геолокация:</span>            <span class="c-white">${geo.country}, ${geo.region}, г. ${geo.city}</span>`);
+  printLine(`  <span class="c-dim">• Координаты узла:</span>       <span class="c-dim">${geo.lat}, ${geo.lon}</span>`);
+  printLine(`  <span class="c-dim">• Таймзона системы:</span>      <span class="c-cyan">${systemTz} (${sysOffsetStr})</span>`);
+  await delay(160);
+
+  // Блок 2: VPN / Proxy анализ
+  let isVpn = false;
+  let vpnMsg = '';
+  const isHosting = /(hosting|datacenter|cloud|vultr|digitalocean|hetzner|m247|ovh|amazon|google|microsoft|oracle|tailscale|wireguard|vpn|server)/i.test(geo.isp);
+
+  if (geo.tz && systemTz && geo.tz !== systemTz) {
+    isVpn = true;
+    vpnMsg = `Несовпадение часового пояса: IP зарегистрирован в [${geo.tz}], но системный хронометр устройства: [${systemTz}]`;
+  } else if (isHosting) {
+    isVpn = true;
+    vpnMsg = `Узел маршрутизируется через ЦОД/Хостинг (${geo.isp}) с маскирующим туннелем`;
+  }
+
+  if (isVpn) {
+    audio.beep(440, 0.12);
+    printLine(`
+      <div class="term-alert-box">
+        <span class="c-red c-bold">>>> ВНИМАНИЕ: ОБНАРУЖЕН МАСКИРУЮЩИЙ СЕТЕВОЙ ТУННЕЛЬ (VPN / PROXY) <<<</span><br>
+        <span class="c-dim">• Анализ аномалии:</span> <span class="c-white">${vpnMsg}</span><br>
+        <span class="c-dim">• Статус защиты:</span> <span class="c-amber">Исходный узел частично деанонимизирован сквозной телеметрией.</span>
+      </div>
+    `);
+  } else {
+    printLine('  <span class="c-green">[OK] Прямой маршрут подтверждён (без признаков маскирующего туннелирования)</span>');
+  }
+  await delay(160);
+
+  // Блок 3: Железо и графический процессор
+  printLine('<span class="c-white c-bold">[+] АППАРАТНАЯ СИГНАТУРА ТЕРМИНАЛА (HARDWARE):</span>');
+  printLine(`  <span class="c-dim">• Видеокарта (GPU):</span>      <span class="c-cyan c-bold">${gpu.renderer}</span>`);
+  printLine(`  <span class="c-dim">• Вендор GPU:</span>            <span class="c-dim">${gpu.vendor}</span>`);
+  printLine(`  <span class="c-dim">• Процессор (CPU):</span>       <span class="c-white">${navigator.hardwareConcurrency || 4} логических ядер</span>`);
+  printLine(`  <span class="c-dim">• Оперативная память:</span>    <span class="c-white">${navigator.deviceMemory ? navigator.deviceMemory + ' ГБ' : 'Защищено sandboxing'}</span>`);
+  printLine(`  <span class="c-dim">• Состояние питания:</span>     <span class="c-green">${batteryText}</span>`);
+  await delay(160);
+
+  // Блок 4: Дисплейная матрица
+  const touchPts = navigator.maxTouchPoints || 0;
+  const touchStr = touchPts > 0 ? `Мультитач (${touchPts} точек касания)` : 'Курсор / Клавиатура';
+  printLine('<span class="c-white c-bold">[+] ДИСПЛЕЙНАЯ МАТРИЦА И СЕНСОРЫ:</span>');
+  printLine(`  <span class="c-dim">• Физические пиксели:</span>    <span class="c-white">${physW} × ${physH} px (Viewport: ${window.innerWidth}×${window.innerHeight})</span>`);
+  printLine(`  <span class="c-dim">• Коэффициент Retina:</span>    <span class="c-white">${dpr.toFixed(2)}x DPR</span>`);
+  printLine(`  <span class="c-dim">• Частота развёртки:</span>    <span class="c-cyan">${fps} Hz (Кадровая синхронизация)</span>`);
+  printLine(`  <span class="c-dim">• Тип устройства:</span>        <span class="c-white">${touchStr}</span>`);
+  await delay(160);
+
+  // Блок 5: Цифровые отпечатки
+  printLine('<span class="c-white c-bold">[+] ЦИФРОВЫЕ КРИПТОГРАФИЧЕСКИЕ ОТПЕЧАТКИ:</span>');
+  printLine(`  <span class="c-dim">• Canvas2D Signature:</span>    <span class="c-amber">0x${canvasHash}</span>`);
+  printLine(`  <span class="c-dim">• AudioContext Hash:</span>     <span class="c-amber">0x${audioHash}</span>`);
+  printLine(`  <span class="c-dim">• Системные языки:</span>       <span class="c-white">${navigator.languages ? navigator.languages.join(', ') : navigator.language}</span>`);
+  printLine(`  <span class="c-dim">• Платформа ОС:</span>          <span class="c-dim">${navigator.platform || 'Н/Д'}</span>`);
+  await delay(180);
+
+  // Финальный вердикт
+  printLine('<div class="term-hr">================================================================================</div>');
+  printLine('<span class="c-red c-bold">>>> СТАТУС: ДОСТУП К ЗАПРАШИВАЕМОМУ РЕСУРСУ ВРЕМЕННО ОГРАНИЧЕН</span>');
+  printLine('<span class="c-dim">ПРИЧИНА: Ведутся плановые регламентные работы на магистральном шлюзе инфраструктуры.</span>');
+  printLine('<span class="c-dim">Сетевой профиль и аппаратная сигнатура узла успешно зафиксированы в журнале аудита.</span>');
+  printLine('<div class="term-hr">================================================================================</div>');
+
+  // Интерактивные кнопки
+  const promptBox = document.createElement('div');
+  promptBox.className = 'term-prompt-row';
+  promptBox.innerHTML = `
+    <button type="button" id="btnRetest" class="cmd-btn">
+      <span>[ ПОВТОРИТЬ ОПРОС УЗЛА ]</span>
+    </button>
+    <button type="button" id="btnExport" class="cmd-btn secondary">
+      <span>[ ВЫГРУЗИТЬ ДАМП JSON ]</span>
+    </button>
+    <span class="cursor"></span>
+  `;
+  container.appendChild(promptBox);
+
+  const skipHint = document.createElement('div');
+  skipHint.className = 'skip-hint';
+  skipHint.textContent = 'Подсказка: клик в любой точке экрана завершает вывод мгновенно.';
+  container.appendChild(skipHint);
+
+  window.scrollTo(0, document.body.scrollHeight);
+
+  document.getElementById('btnRetest')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    runHackerTerminal();
   });
 
-  // 5. Сетевой интерфейс браузера
-  const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-  if (conn) {
-    const netType = conn.effectiveType ? conn.effectiveType.toUpperCase() : 'LAN/Wi-Fi';
-    const downlink = conn.downlink ? `${conn.downlink} Мбит/с` : 'Н/Д';
-    const rtt = conn.rtt ? `${conn.rtt} мс` : 'Н/Д';
-    TelemetryDossier.network.connection = { netType, downlink, rtt };
-    document.getElementById('valNetType').textContent = `${netType} (Шлюз)`;
-    document.getElementById('valDownlink').textContent = downlink;
-    document.getElementById('valRtt').textContent = rtt;
-  } else {
-    document.getElementById('valNetType').textContent = 'Ethernet / Оптоволокно';
-    document.getElementById('valDownlink').textContent = 'Скрыто политикой ОС';
-    document.getElementById('valRtt').textContent = '< 15 мс';
-  }
-
-  // 6. WebRTC STUN Leak (Локальный IP)
-  logTerminal('Запрос STUN-маршрута: поиск локального сетевого адреса...', 'info');
-  const rtcData = await detectWebRTCLocalIP();
-  TelemetryDossier.network.webrtc = rtcData;
-  document.getElementById('valLocalIp').textContent = rtcData.localIp;
-  if (rtcData.localIp && rtcData.localIp.includes('.')) {
-    logTerminal(`WebRTC Leak: обнаружен внутренний шлюз подсети ${rtcData.localIp}`, 'warn');
-  }
-
-  // 7. Внешний IP и Геолокация
-  logTerminal('Запрос BGP-маршрутизации и публичного IP...', 'info');
-  const geo = await fetchNetworkGeo();
-  TelemetryDossier.network.geo = geo;
-
-  document.getElementById('valPublicIp').textContent = geo.ip;
-  document.getElementById('valIsp').textContent = `${geo.isp} (${geo.asn})`;
-  document.getElementById('valLocation').textContent = `${geo.country}, ${geo.region}, г. ${geo.city}`;
-  document.getElementById('valCoords').textContent = `${geo.latitude}, ${geo.longitude}`;
-  document.getElementById('valCountryCode').textContent = geo.countryCode;
-
-  // 8. Детектор VPN / Proxy (Сверка часовых поясов и системного времени)
-  logTerminal('Проверка расхождения временных зон и BGP-маршрута...', 'info');
-  const systemTz = Intl.DateTimeFormat().resolvedOptions().timeZone || 'Europe/Moscow';
-  const systemOffsetMinutes = -new Date().getTimezoneOffset();
-  const systemOffsetHours = systemOffsetMinutes / 60;
-  const sysOffsetStr = `UTC${systemOffsetHours >= 0 ? '+' : ''}${systemOffsetHours}`;
-
-  document.getElementById('valSystemTz').textContent = `${systemTz} (${sysOffsetStr})`;
-
-  // Анализируем несоответствие
-  let vpnDetected = false;
-  let vpnReason = '';
-
-  const ipTz = geo.timezone || '';
-  const isHostingIsp = /(hosting|datacenter|cloud|vultr|digitalocean|hetzner|m247|ovh|amazon|google|microsoft|oracle|tailscale|wireguard|vpn|server)/i.test(geo.isp + ' ' + geo.org);
-
-  // Сравнение часовых поясов
-  if (ipTz && systemTz && ipTz !== systemTz) {
-    vpnDetected = true;
-    vpnReason = `Несовпадение таймзоны: IP зарегистрирован в зоне [${ipTz}], однако системные часы терминала настроены на [${systemTz}].`;
-  } else if (isHostingIsp) {
-    vpnDetected = true;
-    vpnReason = `Провайдер узла (${geo.isp}) классифицирован как датацентр/хостинг-провайдер с туннелированием трафика.`;
-  }
-
-  const vpnStatusCard = document.getElementById('vpnStatusAlert');
-  const vpnStatusTitle = document.getElementById('vpnAlertTitle');
-  const vpnStatusDesc = document.getElementById('vpnAlertDesc');
-
-  if (vpnDetected) {
-    audio.playAlarm();
-    vpnStatusCard.className = 'status-box status-danger';
-    vpnStatusTitle.textContent = 'ОБНАРУЖЕН МАСКИРУЮЩИЙ СЕТЕВОЙ ТУННЕЛЬ (VPN / PROXY)';
-    vpnStatusDesc.innerHTML = `<strong>Внимание:</strong> ${vpnReason}<br>Реальный системный профиль терминала частично скомпрометирован сквозной телеметрией.`;
-    logTerminal(`ТРЕВОГА: Зафиксирован искусственный туннель: IP=${geo.ip} [${geo.country}], но Timezone=${systemTz}`, 'alert');
-  } else {
-    vpnStatusCard.className = 'status-box status-warning';
-    vpnStatusTitle.textContent = 'ПРЯМОЙ МАРШРУТ (БЕЗ МАСКИРУЮЩЕГО ТУННЕЛИРОВАНИЯ)';
-    vpnStatusDesc.textContent = `Пакеты поступают напрямую через публичный узел оператора связи ${geo.isp}. Совпадение региональных параметров подтверждено.`;
-    logTerminal(`Маршрут прямой: ${geo.isp}, таймзона ${systemTz} синхронизирована`, 'info');
-  }
-
-  // 9. Цифровые криптографические отпечатки
-  logTerminal('Синтез хэшей Canvas2D и AudioContext...', 'info');
-  const canvasHash = computeCanvasFingerprint();
-  const audioHash = await computeAudioFingerprint();
-  const languages = navigator.languages ? navigator.languages.join(', ') : navigator.language;
-  const platform = navigator.platform || 'Н/Д';
-
-  TelemetryDossier.fingerprint = {
-    canvasHash,
-    audioHash,
-    languages,
-    platform,
-    userAgent: navigator.userAgent
-  };
-
-  document.getElementById('valCanvasHash').textContent = `0x${canvasHash}`;
-  document.getElementById('valAudioHash').textContent = `0x${audioHash}`;
-  document.getElementById('valLanguages').textContent = languages;
-  document.getElementById('valPlatform').textContent = `${platform} (${navigator.vendor || 'OS Core'})`;
-
-  logTerminal('Формирование реестра цифрового отпечатка завершено.', 'info');
-  logTerminal('ДОСТУП К ЦЕЛЕВОМУ РЕСУРСУ ЗАБЛОКИРОВАН ДО ОКОНЧАНИЯ РЕГЛАМЕНТНЫХ РАБОТ.', 'alert');
-
-  TelemetryDossier.session.status = 'COMPLETED';
+  document.getElementById('btnExport')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    exportJson();
+  });
 }
 
-// 10. Скачивание диагностического дампа в формате JSON
-function downloadAuditDump() {
-  audio.playBeep(1600, 0.08);
-  const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(TelemetryDossier, null, 2));
-  const downloadAnchor = document.createElement('a');
-  downloadAnchor.setAttribute('href', dataStr);
-  downloadAnchor.setAttribute('download', `AUDIT_TELEMETRY_${TelemetryDossier.session.id}.json`);
-  document.body.appendChild(downloadAnchor);
-  downloadAnchor.click();
-  downloadAnchor.remove();
-  logTerminal('Диагностический дамп успешно экспортирован в JSON.', 'info');
+function exportJson() {
+  audio.beep(1600, 0.08);
+  const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(Dossier, null, 2));
+  const dl = document.createElement('a');
+  dl.setAttribute('href', dataStr);
+  dl.setAttribute('download', `AUDIT_${Dossier.session.id}.json`);
+  document.body.appendChild(dl);
+  dl.click();
+  dl.remove();
 }
 
-// 11. Инициализация при загрузке страницы
 document.addEventListener('DOMContentLoaded', () => {
-  runFullTelemetryAudit();
-
-  const retestBtn = document.getElementById('btnRetest');
-  if (retestBtn) {
-    retestBtn.addEventListener('click', () => {
-      audio.playSweep();
-      if (terminalEl) terminalEl.innerHTML = '';
-      runFullTelemetryAudit();
-    });
-  }
-
-  const exportBtn = document.getElementById('btnExport');
-  if (exportBtn) {
-    exportBtn.addEventListener('click', downloadAuditDump);
-  }
+  runHackerTerminal();
 });
