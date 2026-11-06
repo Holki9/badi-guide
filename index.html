@@ -2,183 +2,384 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>НутриГайд — Интерактивный путеводитель по БАДам и витаминам</title>
-  <meta name="description" content="Научно-обоснованный путеводитель по биологически активным добавкам и витаминам. Интерактивный каталог препаратов и персональный подбор.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>НутриГайд — Интерактивный научный путеводитель по БАДам и витаминам</title>
+  <meta name="description" content="Интерактивный путеводитель по биологически активным добавкам и витаминам. Карусель препаратов, пошаговый опросник и персональный график приёма.">
   <link rel="stylesheet" href="assets/css/style.css">
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2338bdf8' stroke-width='2'><circle cx='12' cy='12' r='10'/><path d='m12 6 3 6-3 6-3-6z'/></svg>">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2300f2fe' stroke-width='2'><circle cx='12' cy='12' r='10'/><path d='m12 6 3 6-3 6-3-6z'/></svg>">
 </head>
 <body>
 
-  <!-- Фоновые неоновые световые сферы (Ambient Glow) -->
+  <!-- Фоновые неоновые световые сферы -->
   <div class="ambient-glow-1"></div>
   <div class="ambient-glow-2"></div>
 
-  <!-- Шапка сайта (Header & Navbar) -->
-  <header class="site-header">
-    <div class="container">
-      <nav class="glass-panel navbar">
-        <a href="#" class="brand">
-          <div class="brand-icon">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"/>
-              <path d="m12 6 3 6-3 6-3-6z"/>
-            </svg>
-          </div>
-          <div class="brand-text">
-            <h1>НутриГайд</h1>
-            <p>Научный гид & Персональный подбор</p>
-          </div>
-        </a>
+  <!-- Главный контейнер приложения -->
+  <div class="app-wrapper">
 
-        <div class="nav-links">
-          <button class="nav-btn active" id="navCatalog" type="button">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <rect width="7" height="7" x="3" y="3" rx="1"/>
-              <rect width="7" height="7" x="14" y="3" rx="1"/>
-              <rect width="7" height="7" x="14" y="14" rx="1"/>
-              <rect width="7" height="7" x="3" y="14" rx="1"/>
-            </svg>
-            Каталог БАДов
-          </button>
-          <button class="nav-btn" id="navQuiz" type="button">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"/>
-              <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/>
-            </svg>
-            Онлайн-тест (Подбор)
-          </button>
-        </div>
+    <!-- Верхняя статусная панель (Top Bar) -->
+    <header class="top-bar">
+      <div class="app-badge" onclick="goToTab(0)" style="cursor: pointer;">
+        <span class="pulse-dot"></span>
+        <span>НутриГайд • 2026</span>
+      </div>
+
+      <!-- Десктопная панель навигации (>= 992px) -->
+      <nav class="desktop-navbar" id="desktopNavbar">
+        <button type="button" class="desktop-nav-link active" onclick="goToTab(0)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          <span>Главная</span>
+        </button>
+        <button type="button" class="desktop-nav-link" onclick="goToTab(1)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
+          <span>Каталог</span>
+        </button>
+        <button type="button" class="desktop-nav-link" onclick="goToTab(2)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+          <span>Опрос</span>
+        </button>
+        <button type="button" class="desktop-nav-link" onclick="goToTab(3)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span>График</span>
+        </button>
+        <button type="button" class="desktop-nav-link" onclick="goToTab(4)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></svg>
+          <span>Инфо</span>
+        </button>
       </nav>
+
+      <button type="button" class="top-bar-action-btn" onclick="goToTab(2)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        <span>Тест подбора</span>
+      </button>
+    </header>
+
+    <!-- ЭКРАН 1: ГЛАВНАЯ (HOME BENTO GRID) -->
+    <main class="screen-view active" id="screen-home">
+      <div class="home-desktop-grid">
+        
+        <!-- Левая колонка -->
+        <div class="home-col-left">
+          <div class="bento-card">
+            <div class="hero-tag">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              Научный нутрицевтический путеводитель
+            </div>
+            <h1 class="hero-h1">Интерактивный гид по добавкам и <span>персональный подбор</span></h1>
+            <p class="hero-p">
+              База знаний по 17 ключевым БАДам и витаминам с реальными составами препаратов, правилами биодоступности и каруселью карточек без простыней текста.
+            </p>
+
+            <div class="stats-row">
+              <div class="stat-chip">
+                <div class="stat-val">17 БАДов</div>
+                <div class="stat-lbl">Доказанная фармакопея</div>
+              </div>
+              <div class="stat-chip">
+                <div class="stat-val">22 препарата</div>
+                <div class="stat-lbl">Оригинальные фото и составы</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Баннер перехода к тесту -->
+          <div class="bento-card cta-banner-card" onclick="goToTab(2)">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <div class="hero-tag" style="color: var(--accent);">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                  Персональный скрининг
+                </div>
+                <div style="font-size: 16px; font-weight: 800; color: #ffffff; margin-top: 2px;">
+                  Пройти тест из 10 вопросов
+                </div>
+                <div style="font-size: 12px; color: var(--text-sub); margin-top: 4px;">
+                  Подбор витаминов по симптомам, сну, нагрузкам и питанию
+                </div>
+              </div>
+              <div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--accent-blue)); display: flex; align-items: center; justify-content: center; color: #020617; flex-shrink: 0;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Правая колонка -->
+        <div class="home-col-right">
+          <div class="bento-card" onclick="goToTab(1)" style="cursor: pointer;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+              <span class="slide-badge">Витрина-карусель</span>
+              <span style="color: var(--accent);">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
+              </span>
+            </div>
+            <div style="font-size: 16px; font-weight: 800; margin-bottom: 6px;">Каталог препаратов</div>
+            <p style="font-size: 12.5px; color: var(--text-sub); line-height: 1.45; margin-bottom: 14px;">
+              Удобный горизонтальный просмотр добавок: Витамины D3, C, A, E, Магний, Омега-3, Коллаген, BCAA, Креатин и др.
+            </p>
+            <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+              <span class="brand-tag">Solgar</span>
+              <span class="brand-tag">NOW Foods</span>
+              <span class="brand-tag">Doppelherz</span>
+              <span class="brand-tag">Эвалар</span>
+            </div>
+          </div>
+
+          <div class="bento-card" onclick="goToTab(3)" style="cursor: pointer;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+              <span class="slide-badge">Умный таймлайн</span>
+              <span style="color: var(--accent);">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              </span>
+            </div>
+            <div style="font-size: 16px; font-weight: 800; margin-bottom: 6px;">График приёма без конфликтов</div>
+            <p style="font-size: 12.5px; color: var(--text-sub); line-height: 1.45;">
+              Распределение на Утро (энергия), День (активность) и Вечер (восстановление и сон) с учётом синергии элементов.
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </main>
+
+    <!-- ЭКРАН 2: КАТАЛОГ В ВИДЕ КАРУСЕЛИ (SCREEN-CATALOG) -->
+    <section class="screen-view" id="screen-catalog">
+      <div class="catalog-header-wrap">
+        <div class="catalog-title-area">
+          <h2>Каталог БАДов</h2>
+          <p>Листайте карусель добавок свайпом или стрелками</p>
+        </div>
+
+        <!-- Поиск -->
+        <div class="catalog-search-wrap" style="margin-bottom: 0; min-width: 260px;">
+          <div class="catalog-search-icon">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          </div>
+          <input type="text" id="catalogSearchInput" class="catalog-search-input" placeholder="Поиск добавки..." autocomplete="off">
+        </div>
+      </div>
+
+      <!-- Категории-пилюли -->
+      <div class="category-pill-track" id="categoryPillTrack">
+        <button class="cat-pill active" data-cat="all" onclick="filterCatalog('all', this)">Все (17)</button>
+        <button class="cat-pill" data-cat="vitamins" onclick="filterCatalog('vitamins', this)">Витамины</button>
+        <button class="cat-pill" data-cat="minerals" onclick="filterCatalog('minerals', this)">Минералы</button>
+        <button class="cat-pill" data-cat="sport" onclick="filterCatalog('sport', this)">Спорт и энергия</button>
+        <button class="cat-pill" data-cat="sleep" onclick="filterCatalog('sleep', this)">Сон и стресс</button>
+        <button class="cat-pill" data-cat="beauty" onclick="filterCatalog('beauty', this)">Красота и ЖКТ</button>
+      </div>
+
+      <!-- Панель управления каруселью (счётчик и стрелки) -->
+      <div class="carousel-nav-bar">
+        <div class="carousel-counter-badge">
+          Карточка <span id="carouselActiveIdx">1</span> из <span id="carouselTotal">17</span>
+        </div>
+        <div class="carousel-arrows">
+          <button type="button" class="carousel-arrow-btn" id="carouselPrevBtn" onclick="scrollCarousel(-1)" title="Предыдущая">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m15 18-6-6 6-6"/></svg>
+          </button>
+          <button type="button" class="carousel-arrow-btn" id="carouselNextBtn" onclick="scrollCarousel(1)" title="Следующая">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Витрина-карусель карточек -->
+      <div class="carousel-viewport" id="carouselViewport">
+        <div class="carousel-track" id="catalogCarouselTrack">
+          <!-- Слайды генерируются через JS -->
+        </div>
+      </div>
+
+      <!-- Точки-индикаторы карусели -->
+      <div class="carousel-dots-bar" id="carouselDotsBar">
+        <!-- Генерируются через JS -->
+      </div>
+    </section>
+
+    <!-- ЭКРАН 3: ОПРОСНИК (SCREEN-QUIZ) -->
+    <section class="screen-view" id="screen-quiz">
+      <div class="quest-wrapper">
+        <div class="quest-progress-box">
+          <div class="quest-progress-meta">
+            <span id="quizStepText">Вопрос 1 из 10</span>
+            <span>Персональный скрининг</span>
+          </div>
+          <div class="quest-bar-bg">
+            <div id="quizBarFill" class="quest-bar-fill" style="width: 10%;"></div>
+          </div>
+        </div>
+
+        <div class="bento-card quest-step-card" id="quizCardBox">
+          <div id="quizStepContainer">
+            <!-- Вопрос генерируется через JS -->
+          </div>
+
+          <div class="quest-nav-row">
+            <button type="button" id="quizBackBtn" class="btn-cyber-prev" onclick="handleQuizPrev()" disabled>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+              Назад
+            </button>
+            <button type="button" id="quizForwardBtn" class="btn-cyber-next" onclick="handleQuizNext()">
+              <span>Далее</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Контейнер результатов опроса -->
+        <div id="quizResultsContainer" class="result-box">
+          <!-- Результаты генерируются через JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ЭКРАН 4: ГРАФИК И ПЛАН ПРИЁМА (SCREEN-PLAN) -->
+    <section class="screen-view" id="screen-plan">
+      <div class="catalog-header-wrap" style="margin-bottom: 20px;">
+        <div class="catalog-title-area">
+          <h2>Умный график приёма</h2>
+          <p>Оптимальное распределение нутрицевтиков по биологическим часам</p>
+        </div>
+        <button type="button" class="top-bar-action-btn" onclick="goToTab(2)">
+          <span>Пройти тест для настройки</span>
+        </button>
+      </div>
+
+      <div class="home-desktop-grid" style="margin-bottom: 20px;">
+        <div class="bento-card">
+          <div class="hero-tag" style="color: var(--accent);">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/></svg>
+            Утро • Завтрак (Энергия и усвоение)
+          </div>
+          <div style="font-size: 15px; font-weight: 700; margin-bottom: 8px;">Что принимать утром:</div>
+          <ul style="list-style: none; display: flex; flex-direction: column; gap: 8px; font-size: 13px; color: var(--text-sub);">
+            <li>• <strong style="color: #ffffff;">Хлорофилл</strong> — за 20–30 минут до завтрака натощак со стаканом тёплой воды.</li>
+            <li>• <strong style="color: #ffffff;">Коллаген + Витамин C</strong> — утром натощак для максимального синтеза волокон.</li>
+            <li>• <strong style="color: #ffffff;">Витамин D3 + Омега-3</strong> — строго во время плотного завтрака, содержащего полезные жиры (яйца, авокадо, масло).</li>
+            <li>• <strong style="color: #ffffff;">Железо</strong> — отдельно от чая, кофе и молочных продуктов!</li>
+          </ul>
+        </div>
+
+        <div class="bento-card">
+          <div class="hero-tag" style="color: var(--amber);">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            День • Обед & Тренировка
+          </div>
+          <div style="font-size: 15px; font-weight: 700; margin-bottom: 8px;">Что принимать днём:</div>
+          <ul style="list-style: none; display: flex; flex-direction: column; gap: 8px; font-size: 13px; color: var(--text-sub);">
+            <li>• <strong style="color: #ffffff;">Коэнзим Q10</strong> — во время обеда для поддержания митохондрий и энергии.</li>
+            <li>• <strong style="color: #ffffff;">Цинк</strong> — во время обеда (приём натощак может вызывать тошноту).</li>
+            <li>• <strong style="color: #ffffff;">L-Цитруллин</strong> — за 30–45 минут до тренировки для кровотока.</li>
+            <li>• <strong style="color: #ffffff;">BCAA & Креатин</strong> — перед, во время или сразу после тренировки.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="bento-card">
+        <div class="hero-tag" style="color: var(--violet);">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+          Вечер • Ужин & Подготовка ко сну
+        </div>
+        <div style="font-size: 15px; font-weight: 700; margin-bottom: 8px;">Что принимать вечером:</div>
+        <ul style="list-style: none; display: flex; flex-direction: column; gap: 8px; font-size: 13px; color: var(--text-sub);">
+          <li>• <strong style="color: #ffffff;">Магний (Хелат/Глицинат)</strong> — во время или после ужина для снятия напряжения и спазмов.</li>
+          <li>• <strong style="color: #ffffff;">ГАМК (GABA)</strong> — за 40 минут до сна на пустой желудок для глубокого расслабления.</li>
+          <li>• <strong style="color: #ffffff;">Мелатонин</strong> — за 30 минут до сна строго при выключенном свете и экранах.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ЭКРАН 5: СПРАВОЧНИК И БЕЗОПАСНОСТЬ (SCREEN-INFO) -->
+    <section class="screen-view" id="screen-info">
+      <div class="catalog-header-wrap" style="margin-bottom: 20px;">
+        <div class="catalog-title-area">
+          <h2>Безопасность и правила</h2>
+          <p>Фундаментальные правила доказательной нутрициологии</p>
+        </div>
+      </div>
+
+      <div class="home-desktop-grid">
+        <div class="bento-card">
+          <div class="hero-tag" style="color: var(--coral);">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            Медицинский дисклеймер
+          </div>
+          <p style="font-size: 13.5px; color: var(--text-sub); line-height: 1.55; margin-bottom: 12px;">
+            Биологически активные добавки (БАД) не являются лекарственными средствами. Информация, представленная на сайте, носит ознакомительный характер.
+          </p>
+          <p style="font-size: 13.5px; color: var(--text-sub); line-height: 1.55;">
+            Перед началом курсового приёма любых добавок настоятельно рекомендуется сдать анализы (общий анализ крови, ферритин, 25(OH)D, электролиты) и проконсультироваться с профильным врачом.
+          </p>
+        </div>
+
+        <div class="bento-card">
+          <div class="hero-tag" style="color: var(--emerald);">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            Золотые правила сочетаемости
+          </div>
+          <ul style="list-style: none; display: flex; flex-direction: column; gap: 8px; font-size: 13px; color: var(--text-sub);">
+            <li>• <strong style="color: #ffffff;">Железо + Витамин C</strong> = максимальное всасывание в кишечнике.</li>
+            <li>• <strong style="color: #ffffff;">Железо и Кальций</strong> — антагонисты, разносить минимум на 4 часа!</li>
+            <li>• <strong style="color: #ffffff;">Витамин D3 + K2 + Кальций</strong> — безопасное направление кальция в кости, а не в сосуды.</li>
+            <li>• <strong style="color: #ffffff;">Цинк при долгом приёме</strong> истощает медь, требуется курсовой контроль.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Подвал сайта -->
+    <footer class="site-footer">
+      «НутриГайд» • Интерактивный путеводитель по БАДам и витаминам • 2026
+    </footer>
+
+  </div>
+
+  <!-- ПЛАВАЮЩИЙ ДОК ДЛЯ НАВИГАЦИИ (DOCK BAR ДЛЯ МОБИЛЬНЫХ УСТРОЙСТВ) -->
+  <nav class="dock-container" id="dockContainer">
+    <div class="dock-buttons" id="dockButtons">
+      <button type="button" class="dock-btn active" onclick="goToTab(0)">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        <span>Главная</span>
+      </button>
+      <button type="button" class="dock-btn" onclick="goToTab(1)">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
+        <span>Каталог</span>
+      </button>
+      <button type="button" class="dock-btn" onclick="goToTab(2)">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+        <span>Опрос</span>
+      </button>
+      <button type="button" class="dock-btn" onclick="goToTab(3)">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <span>График</span>
+      </button>
+      <button type="button" class="dock-btn" onclick="goToTab(4)">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></svg>
+        <span>Инфо</span>
+      </button>
     </div>
-  </header>
+  </nav>
 
-  <!-- Главный блок (Hero) -->
-  <main class="container">
-    <section class="hero-section">
-      <div class="hero-badge">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-        </svg>
-        Научный нутрицевтический путеводитель
-      </div>
-      <h2 class="hero-title">
-        Умный гид по добавкам и <span>персональный подбор</span>
-      </h2>
-      <p class="hero-subtitle">
-        Интерактивная база данных по 17 ключевым нутрицевтикам с реальными составами, дозировками производителей и пошаговым тестом для составления индивидуального плана приёма.
-      </p>
-
-      <div class="hero-chips">
-        <div class="chip-item">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-          17 доказанных БАДов
-        </div>
-        <div class="chip-item">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-          22 оригинальных препарата
-        </div>
-        <div class="chip-item">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m4.93 4.93 4.24 4.24"/></svg>
-          10 критериев скрининга
-        </div>
-        <div class="chip-item">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#a855f7" stroke-width="2"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></svg>
-          Медицинская безопасность
-        </div>
-      </div>
-    </section>
-
-    <!-- Вкладка: Каталог БАДов -->
-    <section id="catalogView">
-      <div class="catalog-controls">
-        <div class="search-box">
-          <div class="search-icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="11" cy="11" r="8"/>
-              <path d="m21 21-4.3-4.3"/>
-            </svg>
-          </div>
-          <input type="text" id="searchInput" class="search-input" placeholder="Поиск по названию, эффекту, дозировке или брендам (Solgar, NOW Foods, Эвалар...)" autocomplete="off">
-        </div>
-
-        <div class="filter-tabs">
-          <button class="filter-btn active" data-filter="all" type="button">Все БАДы (17)</button>
-          <button class="filter-btn" data-filter="vitamins" type="button">Витамины</button>
-          <button class="filter-btn" data-filter="minerals" type="button">Минералы</button>
-          <button class="filter-btn" data-filter="sport" type="button">Спорт и энергия</button>
-          <button class="filter-btn" data-filter="sleep" type="button">Сон и нервная система</button>
-          <button class="filter-btn" data-filter="beauty" type="button">Красота и молодость</button>
-        </div>
-      </div>
-
-      <!-- Сетка карточек -->
-      <div id="supplementsGrid" class="supplements-grid">
-        <!-- Генерируется динамически через app.js -->
-      </div>
-    </section>
-
-    <!-- Вкладка: Онлайн-тест (Подбор) -->
-    <section id="quizView" class="quiz-section">
-      <div id="quizFormView" class="glass-panel quiz-card">
-        <div class="quiz-progress-wrap">
-          <div class="quiz-progress-meta">
-            <span id="quizProgressText">Вопрос 1 из 10</span>
-            <span>Персональный подбор</span>
-          </div>
-          <div class="quiz-progress-bar-bg">
-            <div id="quizProgressBar" class="quiz-progress-bar-fill" style="width: 10%;"></div>
-          </div>
-        </div>
-
-        <div id="quizStepContainer">
-          <!-- Вопрос генерируется динамически через app.js -->
-        </div>
-
-        <div class="quiz-nav">
-          <button id="quizPrevBtn" class="btn-secondary" onclick="handleQuizPrev()" disabled type="button">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
-            Назад
-          </button>
-          <button id="quizNextBtn" class="btn-primary" onclick="handleQuizNext()" type="button">
-            Далее
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
-          </button>
-        </div>
-      </div>
-
-      <!-- Контейнер финальных результатов -->
-      <div id="quizResultView" class="quiz-result-view">
-        <!-- Результаты генерируются динамически через app.js -->
-      </div>
-    </section>
-  </main>
-
-  <!-- Модальное окно деталей добавки (Glass Modal) -->
-  <div id="modalOverlay" class="modal-overlay">
-    <div class="glass-panel modal-container">
-      <button id="modalCloseBtn" class="modal-close-btn" type="button" aria-label="Закрыть">
+  <!-- МОДАЛЬНОЕ ОКНО ДЕТАЛЕЙ БАДА (С ФОТО-КАРУСЕЛЬЮ) -->
+  <div id="modalOverlay" class="modal-overlay" onclick="closeModal(event)">
+    <div class="modal-panel" onclick="event.stopPropagation()">
+      <button type="button" class="modal-close-btn" onclick="closeModal()" title="Закрыть">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
       </button>
       <div id="modalBody">
-        <!-- Контент модального окна генерируется динамически -->
+        <!-- Контент модалки генерируется через JS -->
       </div>
     </div>
   </div>
 
-  <!-- Подвал сайта (Footer) -->
-  <footer class="site-footer">
-    <div class="container">
-      <p class="disclaimer-text">
-        Внимание: Биологически активные добавки (БАД) не являются лекарственными средствами. Информация на данном сайте представлена исключительно в образовательных и ознакомительных целях. Перед началом применения любых добавок обязательно проконсультируйтесь с лечащим врачом и сдайте соответствующие лабораторные анализы.
-      </p>
-      <p style="font-size: 0.78rem; color: var(--text-dim);">
-        «НутриГайд» — Интерактивный путеводитель по БАДам и витаминам • Разработано для Holki9
-      </p>
-    </div>
-  </footer>
+  <!-- Всплывающий тост уведомления -->
+  <div class="cyber-toast" id="cyberToast">
+    <div style="width: 7px; height: 7px; border-radius: 50%; background: var(--accent);"></div>
+    <span id="cyberToastText">Скопировано в буфер</span>
+  </div>
 
-  <!-- Скрипты базы данных и приложения -->
+  <!-- Подключение скриптов данных и логики -->
   <script src="assets/js/data.js"></script>
   <script src="assets/js/app.js"></script>
 </body>
