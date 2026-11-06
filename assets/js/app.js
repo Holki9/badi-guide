@@ -780,16 +780,22 @@ let introSplashActive = true;
 
 function runIntroAnimation() {
   const overlay = document.getElementById('introSplashOverlay');
+  if (!overlay) return;
+
+  // Если заставка уже просмотрена в текущей сессии — скрываем мгновенно
+  if (sessionStorage.getItem('kod_splash_seen')) {
+    overlay.style.display = 'none';
+    introSplashActive = false;
+    return;
+  }
+
   const fill = document.getElementById('introFillBar');
   const status = document.getElementById('introStatusText');
   const percent = document.getElementById('introPercentText');
 
-  if (!overlay) return;
-
   const steps = [
-    { pct: 28, text: 'Синтез базы нутрицевтиков...' },
-    { pct: 58, text: 'Калибровка биодоступности...' },
-    { pct: 88, text: '17 формул чистоты готово...' },
+    { pct: 35, text: 'Синтез базы нутрицевтиков...' },
+    { pct: 70, text: 'Калибровка формул чистоты...' },
     { pct: 100, text: 'Баланс установлен' }
   ];
 
@@ -810,20 +816,24 @@ function runIntroAnimation() {
       clearInterval(interval);
       setTimeout(() => {
         dismissIntroSplash();
-      }, 400);
+      }, 350);
     }
-  }, 420);
+  }, 360);
 }
 
 function dismissIntroSplash() {
   tactileTap();
   introSplashActive = false;
+  try {
+    sessionStorage.setItem('kod_splash_seen', '1');
+  } catch (e) {}
+
   const overlay = document.getElementById('introSplashOverlay');
   if (overlay) {
     overlay.classList.add('dismissed');
     setTimeout(() => {
       overlay.style.display = 'none';
-    }, 500);
+    }, 450);
   }
 }
 
