@@ -1,4 +1,4 @@
-// --- Интерактивное ядро «НутриГайд» (Архитектура Genetic Shield) ---
+// --- Интерактивное ядро «Код Добавки» (Светлый эко-дизайн) ---
 
 // 1. Библиотека векторных SVG иконок (Строго 0 эмодзи)
 const SVG_ICONS = {
@@ -21,7 +21,7 @@ function getIcon(name) {
   return SVG_ICONS[name] || SVG_ICONS.logo;
 }
 
-// 2. Тактильная отдача (Haptic Tap как в Genetic Shield)
+// 2. Тактильный отклик и уведомления
 function tactileTap() {
   if (navigator.vibrate) {
     try {
@@ -30,7 +30,6 @@ function tactileTap() {
   }
 }
 
-// Всплывающее уведомление (Toast)
 function showToast(text) {
   const toast = document.getElementById('cyberToast');
   const toastText = document.getElementById('cyberToastText');
@@ -43,7 +42,7 @@ function showToast(text) {
   }
 }
 
-// 3. Управление экранами (Screen Tabs)
+// 3. Управление вкладками и экранами
 const screens = ['home', 'catalog', 'quiz', 'plan', 'info'];
 let currentTabIndex = 0;
 
@@ -52,18 +51,15 @@ function goToTab(toIdx) {
   tactileTap();
   currentTabIndex = toIdx;
 
-  // Переключение активного экрана
   document.querySelectorAll('.screen-view').forEach(s => s.classList.remove('active'));
   const sc = document.getElementById(`screen-${screens[toIdx]}`);
   if (sc) sc.classList.add('active');
 
-  // Синхронизация десктопного навбара
   document.querySelectorAll('.desktop-nav-link').forEach((link, idx) => {
     if (idx === toIdx) link.classList.add('active');
     else link.classList.remove('active');
   });
 
-  // Синхронизация мобильного плавающего дока
   document.querySelectorAll('.dock-btn').forEach((btn, idx) => {
     if (idx === toIdx) btn.classList.add('active');
     else btn.classList.remove('active');
@@ -71,7 +67,6 @@ function goToTab(toIdx) {
 
   window.scrollTo({ top: 0, behavior: 'smooth' });
 
-  // При переходе на каталог инициализируем карусель
   if (toIdx === 1) {
     setTimeout(initCarouselObserver, 80);
   }
@@ -80,7 +75,6 @@ function goToTab(toIdx) {
 // 4. КАРУСЕЛЬ КАТАЛОГА (HORIZONTAL CAROUSEL)
 let activeCatalogCategory = 'all';
 let catalogSearchQuery = '';
-let currentVisibleSlideIdx = 1;
 
 function filterCatalog(cat, elem) {
   tactileTap();
@@ -114,7 +108,7 @@ function renderCatalogCarousel() {
 
   if (filtered.length === 0) {
     track.innerHTML = `
-      <div style="flex: 1; text-align: center; padding: 48px 16px; background: rgba(15,23,42,0.8); border: 1px solid var(--card-border); border-radius: var(--radius);">
+      <div style="flex: 1; text-align: center; padding: 48px 16px; background: #ffffff; border: 1px solid var(--card-border); border-radius: var(--radius-lg);">
         <p style="color: var(--text-sub); font-size: 14px;">Ничего не найдено по вашему запросу</p>
       </div>
     `;
@@ -122,7 +116,6 @@ function renderCatalogCarousel() {
     return;
   }
 
-  // Рендерим слайды карусели
   track.innerHTML = filtered.map((item, idx) => `
     <div class="carousel-slide" data-idx="${idx + 1}" onclick="openModal('${item.id}')">
       <div class="slide-top">
@@ -136,7 +129,7 @@ function renderCatalogCarousel() {
       <div class="slide-latin">${item.latin_name}</div>
       <div class="slide-desc">${item.tagline}</div>
       <div class="slide-footer">
-        <span style="font-size: 11px; color: var(--text-dim);">${item.brands ? item.brands.length + ' препарата' : ''}</span>
+        <span style="font-size: 11.5px; color: var(--text-dim); font-weight: 600;">${item.brands ? item.brands.length + ' препарата' : ''}</span>
         <button type="button" class="slide-btn">
           Подробнее ${getIcon('arrowRight')}
         </button>
@@ -144,14 +137,12 @@ function renderCatalogCarousel() {
     </div>
   `).join('');
 
-  // Рендерим точки-индикаторы
   if (dotsBar) {
     dotsBar.innerHTML = filtered.map((_, idx) => `
       <div class="carousel-dot ${idx === 0 ? 'active' : ''}" onclick="goToCarouselSlide(${idx})"></div>
     `).join('');
   }
 
-  // Сбрасываем скролл в начало
   track.scrollTo({ left: 0, behavior: 'instant' });
   initCarouselObserver();
 }
@@ -176,7 +167,6 @@ function goToCarouselSlide(index) {
   }
 }
 
-// Отслеживание активного слайда при свайпе
 function initCarouselObserver() {
   const track = document.getElementById('catalogCarouselTrack');
   if (!track) return;
@@ -209,7 +199,7 @@ function initCarouselObserver() {
   };
 }
 
-// 5. МОДАЛЬНОЕ ОКНО ДЕТАЛЕЙ БАДА (С ФОТО-КАРУСЕЛЬЮ)
+// 5. МОДАЛЬНОЕ ОКНО ДЕТАЛЕЙ БАДА (100% ГАРАНТИЯ ЗАКРЫТИЯ ПО КРЕСТИКУ)
 function openModal(id) {
   tactileTap();
   const item = SUPPLEMENTS_DATA.find(s => s.id === id);
@@ -239,9 +229,9 @@ function openModal(id) {
 
     <!-- Заголовок и научное понятие -->
     <span class="slide-badge" style="margin-bottom: 8px;">${item.category_name}</span>
-    <h2 style="font-size: 22px; font-weight: 800; margin-bottom: 2px;">${item.name}</h2>
+    <h2 style="font-size: 22px; font-weight: 800; color: var(--text-title); margin-bottom: 2px;">${item.name}</h2>
     <p style="font-size: 13px; color: var(--text-dim); font-style: italic; margin-bottom: 12px;">${item.latin_name}</p>
-    <p style="font-size: 13.5px; color: var(--text-sub); line-height: 1.55; margin-bottom: 16px;">${item.concept}</p>
+    <p style="font-size: 13.5px; color: var(--text-main); line-height: 1.55; margin-bottom: 16px;">${item.concept}</p>
 
     <!-- Сетка параметров -->
     <div class="modal-grid-info">
@@ -265,11 +255,11 @@ function openModal(id) {
 
     <!-- Биологические функции -->
     <div style="margin-top: 18px;">
-      <div class="modal-info-lbl">Что делает в организме:</div>
-      <ul style="list-style: none; display: flex; flex-direction: column; gap: 6px; margin-top: 8px;">
+      <div class="modal-info-lbl" style="margin-bottom: 6px;">Что делает в организме:</div>
+      <ul style="list-style: none; display: flex; flex-direction: column; gap: 6px;">
         ${item.benefits ? item.benefits.map(b => `
           <li style="display: flex; gap: 8px; font-size: 13px; color: var(--text-sub);">
-            <span style="color: var(--accent); flex-shrink: 0;">${getIcon('check')}</span>
+            <span style="color: var(--primary); flex-shrink: 0;">${getIcon('check')}</span>
             <span>${b}</span>
           </li>
         `).join('') : ''}
@@ -279,12 +269,12 @@ function openModal(id) {
     <!-- Бренды и препараты из файла -->
     ${item.brands && item.brands.length ? `
       <div style="margin-top: 20px;">
-        <div class="modal-info-lbl">Оригинальные препараты из базы:</div>
+        <div class="modal-info-lbl" style="margin-bottom: 6px;">Оригинальные препараты из файла:</div>
         <table class="brands-mini-table">
           <thead>
             <tr>
               <th>Бренд / Продукт</th>
-              <th>Состав и действие</th>
+              <th>Состав и особенности</th>
             </tr>
           </thead>
           <tbody>
@@ -292,7 +282,7 @@ function openModal(id) {
               <tr>
                 <td style="width: 38%;">
                   <span class="brand-tag">${b.brand}</span>
-                  <div style="font-weight: 700; color: #ffffff; margin-top: 4px;">${b.product}</div>
+                  <div style="font-weight: 700; color: var(--text-title); margin-top: 4px;">${b.product}</div>
                 </td>
                 <td style="color: var(--text-sub);">${b.desc}</td>
               </tr>
@@ -304,11 +294,18 @@ function openModal(id) {
 
     <!-- Противопоказания -->
     ${item.contraindications ? `
-      <div style="margin-top: 18px; padding: 14px; background: rgba(255, 82, 82, 0.08); border: 1px solid rgba(255, 82, 82, 0.25); border-radius: var(--radius-sm);">
-        <div style="font-size: 11.5px; font-weight: 700; color: var(--coral); margin-bottom: 4px;">Предостережения:</div>
-        <div style="font-size: 12.5px; color: var(--text-sub); line-height: 1.45;">${item.contraindications}</div>
+      <div style="margin-top: 18px; padding: 14px; background: rgba(225, 29, 72, 0.06); border: 1px solid rgba(225, 29, 72, 0.2); border-radius: var(--radius-md);">
+        <div style="font-size: 11.5px; font-weight: 800; color: var(--accent-rose); margin-bottom: 4px;">Предостережения:</div>
+        <div style="font-size: 12.5px; color: var(--text-main); line-height: 1.45;">${item.contraindications}</div>
       </div>
     ` : ''}
+
+    <!-- Нижняя кнопка закрытия для максимального удобства -->
+    <div style="margin-top: 24px; text-align: center;">
+      <button type="button" class="btn-cyber-prev" onclick="forceCloseModal()" style="padding: 11px 32px;">
+        Закрыть окно
+      </button>
+    </div>
   `;
 
   modalOverlay.classList.add('active');
@@ -323,12 +320,20 @@ function switchModalPhoto(src, thumbElem) {
   if (thumbElem) thumbElem.classList.add('active');
 }
 
-function closeModal(e) {
-  if (e && e.target !== e.currentTarget && !e.target.closest('.modal-close-btn')) return;
+// Безусловное закрытие модалки
+function forceCloseModal() {
   tactileTap();
   const modalOverlay = document.getElementById('modalOverlay');
-  if (modalOverlay) modalOverlay.classList.remove('active');
+  if (modalOverlay) {
+    modalOverlay.classList.remove('active');
+  }
   document.body.style.overflow = '';
+}
+
+function closeModalOnOverlay(e) {
+  if (e && e.target && e.target.id === 'modalOverlay') {
+    forceCloseModal();
+  }
 }
 
 // 6. ПОШАГОВЫЙ ОПРОСНИК (QUIZ ENGINE)
@@ -638,16 +643,15 @@ function calculateResults() {
   // Предостережения
   const cautions = userAnswers.cautions || [];
   if (cautions.includes('warn_pregnancy')) {
-    warnings.push('Беременность / Планирование: избегайте высоких доз готового Витамина А. Согласуйте добавки с акушером-гинекологом.');
+    warnings.push('Беременность / Планирование: избегайте высоких доз готового Витамина А. Согласуйте добавки с врачом.');
   }
   if (cautions.includes('warn_anticoagulants')) {
     warnings.push('Прием антикоагулянтов: Омега-3 и Коэнзим Q10 в высоких дозах влияют на свертываемость. Принимайте под контролем врача.');
   }
   if (cautions.includes('warn_allergy')) {
-    warnings.push('Аллергия на рыбий жир: используйте растительную Омегу-3 (из микроводорослей) либо исключите добавку.');
+    warnings.push('Аллергия на рыбий жир: используйте растительную Омегу-3 (из водорослей) либо исключите добавку.');
   }
 
-  // Дедупликация
   const uniqueRecs = [];
   const seen = new Set();
   recs.forEach(r => {
@@ -677,21 +681,21 @@ function renderQuizResults() {
   container.innerHTML = `
     <div class="bento-card" style="padding: 28px;">
       <div style="text-align: center; margin-bottom: 24px;">
-        <span class="slide-badge" style="color: var(--accent); border-color: rgba(0,242,254,0.3);">Скрининг завершён</span>
-        <h2 style="font-size: 22px; font-weight: 800; margin-top: 8px;">Ваш персональный план БАДов</h2>
+        <span class="slide-badge">Скрининг завершён</span>
+        <h2 style="font-size: 22px; font-weight: 800; color: var(--text-title); margin-top: 8px;">Ваш персональный план БАДов</h2>
         <p style="font-size: 13px; color: var(--text-sub); margin-top: 4px;">${genderStr}, ${userAnswers.age} лет • На основе питания, сна и физической активности</p>
       </div>
 
       ${deficits.length ? `
-        <div style="padding: 14px; background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.25); border-radius: var(--radius-sm); margin-bottom: 20px;">
-          <div style="font-size: 12px; font-weight: 700; color: var(--amber); margin-bottom: 6px;">Выявленные зоны внимания:</div>
+        <div style="padding: 14px; background: rgba(217, 119, 6, 0.08); border: 1px solid rgba(217, 119, 6, 0.25); border-radius: var(--radius-md); margin-bottom: 20px;">
+          <div style="font-size: 12px; font-weight: 800; color: var(--accent-amber); margin-bottom: 6px;">Выявленные зоны внимания:</div>
           <ul style="list-style: none; display: flex; flex-direction: column; gap: 4px;">
-            ${deficits.map(d => `<li style="font-size: 12.5px; color: #ffffff;">• ${d}</li>`).join('')}
+            ${deficits.map(d => `<li style="font-size: 12.5px; color: var(--text-main);">• ${d}</li>`).join('')}
           </ul>
         </div>
       ` : ''}
 
-      <div style="font-size: 14px; font-weight: 700; margin-bottom: 12px;">Рекомендованные препараты (${uniqueRecs.length}):</div>
+      <div style="font-size: 14px; font-weight: 800; color: var(--text-title); margin-bottom: 12px;">Рекомендованные препараты (${uniqueRecs.length}):</div>
       <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px;">
         ${uniqueRecs.map(r => {
           const item = SUPPLEMENTS_DATA.find(s => s.id === r.id);
@@ -705,17 +709,17 @@ function renderQuizResults() {
                 <div class="quest-opt-label">${item.name}</div>
                 <div class="quest-opt-desc">${r.reason}</div>
               </div>
-              <div style="font-size: 11px; font-weight: 700; color: var(--accent);">${r.timing.split('(')[0]}</div>
+              <div style="font-size: 11px; font-weight: 800; color: var(--primary);">${r.timing.split('(')[0]}</div>
             </div>
           `;
         }).join('')}
       </div>
 
       ${warnings.length ? `
-        <div style="padding: 14px; background: rgba(255, 82, 82, 0.08); border: 1px solid rgba(255, 82, 82, 0.25); border-radius: var(--radius-sm); margin-bottom: 20px;">
-          <div style="font-size: 12px; font-weight: 700; color: var(--coral); margin-bottom: 4px;">Внимание: медицинские ограничения:</div>
+        <div style="padding: 14px; background: rgba(225, 29, 72, 0.06); border: 1px solid rgba(225, 29, 72, 0.2); border-radius: var(--radius-md); margin-bottom: 20px;">
+          <div style="font-size: 12px; font-weight: 800; color: var(--accent-rose); margin-bottom: 4px;">Внимание: медицинские ограничения:</div>
           <ul style="list-style: none; display: flex; flex-direction: column; gap: 4px;">
-            ${warnings.map(w => `<li style="font-size: 12px; color: #fca5a5;">${w}</li>`).join('')}
+            ${warnings.map(w => `<li style="font-size: 12px; color: var(--accent-rose);">• ${w}</li>`).join('')}
           </ul>
         </div>
       ` : ''}
@@ -738,7 +742,7 @@ function renderQuizResults() {
 function copyPlanText() {
   tactileTap();
   const { uniqueRecs, schedule } = calculateResults();
-  let text = `Персональный план БАДов (НутриГайд)\n`;
+  let text = `Персональный план БАДов (Код Добавки)\n`;
   text += `Возраст: ${userAnswers.age} лет, Пол: ${userAnswers.gender === 'female' ? 'Женский' : 'Мужской'}\n\n`;
   text += `Рекомендованные БАДы:\n`;
   uniqueRecs.forEach(r => {
@@ -779,6 +783,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Закрытие модалки по Escape
   window.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') closeModal();
+    if (e.key === 'Escape') forceCloseModal();
   });
 });
