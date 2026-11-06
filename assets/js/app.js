@@ -775,12 +775,68 @@ function restartQuiz() {
   renderQuizStep();
 }
 
-// 7. Инициализация
+// 7. ИНТРО-ЗАСТАВКА (PREMIUM BIO-CODE SPLASH)
+let introSplashActive = true;
+
+function runIntroAnimation() {
+  const overlay = document.getElementById('introSplashOverlay');
+  const fill = document.getElementById('introFillBar');
+  const status = document.getElementById('introStatusText');
+  const percent = document.getElementById('introPercentText');
+
+  if (!overlay) return;
+
+  const steps = [
+    { pct: 28, text: 'Синтез базы нутрицевтиков...' },
+    { pct: 58, text: 'Калибровка биодоступности...' },
+    { pct: 88, text: '17 формул чистоты готово...' },
+    { pct: 100, text: 'Баланс установлен' }
+  ];
+
+  let currentIdx = 0;
+  const interval = setInterval(() => {
+    if (!introSplashActive) {
+      clearInterval(interval);
+      return;
+    }
+
+    if (currentIdx < steps.length) {
+      const s = steps[currentIdx];
+      if (fill) fill.style.width = `${s.pct}%`;
+      if (status) status.textContent = s.text;
+      if (percent) percent.textContent = `${s.pct}%`;
+      currentIdx++;
+    } else {
+      clearInterval(interval);
+      setTimeout(() => {
+        dismissIntroSplash();
+      }, 400);
+    }
+  }, 420);
+}
+
+function dismissIntroSplash() {
+  tactileTap();
+  introSplashActive = false;
+  const overlay = document.getElementById('introSplashOverlay');
+  if (overlay) {
+    overlay.classList.add('dismissed');
+    setTimeout(() => {
+      overlay.style.display = 'none';
+    }, 500);
+  }
+}
+
+// 8. Инициализация
 document.addEventListener('DOMContentLoaded', () => {
   renderCarouselCards();
   renderQuizStep();
+  runIntroAnimation();
 
   window.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') forceCloseModal();
+    if (e.key === 'Escape') {
+      forceCloseModal();
+      dismissIntroSplash();
+    }
   });
 });

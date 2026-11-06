@@ -1137,3 +1137,240 @@ html, body {
   border-top: 1px solid var(--card-border);
   margin-top: 40px;
 }
+
+/* ========================================================
+   ИНТРО-ЗАСТАВКА (PREMIUM BIO-CODE SPLASH SCREEN)
+   ======================================================== */
+.intro-splash-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999999 !important;
+  background: radial-gradient(circle at 50% 40%, #ffffff 0%, #edf5ef 55%, #e1eee5 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  overflow: hidden;
+  transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), filter 0.5s ease;
+}
+
+.intro-splash-overlay.dismissed {
+  opacity: 0;
+  transform: scale(1.05);
+  filter: blur(14px);
+  pointer-events: none;
+}
+
+.intro-skip-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 14px;
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-pill);
+  color: var(--text-sub);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: var(--transition);
+  z-index: 10;
+}
+
+.intro-skip-btn:hover {
+  background: #ffffff;
+  color: var(--text-title);
+  border-color: var(--primary);
+}
+
+.intro-splash-box {
+  width: 100%;
+  max-width: 440px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  z-index: 2;
+  animation: introFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes introFadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Орбита микроэлементов и логотип */
+.intro-emblem-wrap {
+  position: relative;
+  width: 190px;
+  height: 190px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.intro-orbit-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1.5px dashed rgba(16, 185, 129, 0.35);
+  animation: rotateOrbit 18s linear infinite;
+}
+
+@keyframes rotateOrbit {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.orbit-item {
+  position: absolute;
+  font-size: 10.5px;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: #ffffff;
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  color: var(--primary-dark);
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.15);
+  animation: counterRotate 18s linear infinite;
+  white-space: nowrap;
+}
+
+@keyframes counterRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(-360deg); }
+}
+
+.orbit-1 { top: -10px; left: 50%; transform: translateX(-50%); }
+.orbit-2 { top: 32px; right: -12px; }
+.orbit-3 { bottom: 32px; right: -12px; }
+.orbit-4 { bottom: -10px; left: 50%; transform: translateX(-50%); }
+.orbit-5 { bottom: 32px; left: -14px; }
+.orbit-6 { top: 32px; left: -14px; }
+
+.intro-logo-core {
+  width: 116px;
+  height: 116px;
+  border-radius: 26px;
+  background: #ffffff;
+  border: 1px solid var(--card-border);
+  box-shadow: 0 12px 32px rgba(25, 70, 45, 0.12), 0 0 35px rgba(16, 185, 129, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  animation: pulseLogo 3s ease-in-out infinite;
+}
+
+@keyframes pulseLogo {
+  0%, 100% { transform: scale(1); box-shadow: 0 12px 32px rgba(25, 70, 45, 0.12), 0 0 30px rgba(16, 185, 129, 0.15); }
+  50% { transform: scale(1.04); box-shadow: 0 16px 42px rgba(25, 70, 45, 0.16), 0 0 45px rgba(16, 185, 129, 0.28); }
+}
+
+.intro-logo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Тексты заставки */
+.intro-text-box {
+  margin-bottom: 22px;
+}
+
+.intro-badge {
+  display: inline-flex;
+  padding: 4px 12px;
+  border-radius: 6px;
+  background: rgba(16, 185, 129, 0.12);
+  color: var(--primary);
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 8px;
+}
+
+.intro-title {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--navy);
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  margin-bottom: 6px;
+}
+
+.intro-tagline {
+  font-size: 12.5px;
+  color: var(--text-sub);
+  line-height: 1.45;
+  max-width: 330px;
+  margin: 0 auto;
+}
+
+/* Прогресс-бар */
+.intro-loader-box {
+  width: 100%;
+  max-width: 320px;
+  margin-bottom: 20px;
+}
+
+.intro-track {
+  width: 100%;
+  height: 6px;
+  background: rgba(46, 125, 80, 0.12);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.intro-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--primary-gradient);
+  border-radius: var(--radius-sm);
+  transition: width 0.25s ease-out;
+}
+
+.intro-status-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-dim);
+}
+
+.intro-status-row span:last-child {
+  color: var(--primary);
+  font-weight: 800;
+}
+
+/* Кнопка войти */
+.btn-intro-enter {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 28px;
+  border-radius: var(--radius-md);
+  background: var(--primary-gradient);
+  border: none;
+  color: #ffffff;
+  font-size: 13.5px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 6px 20px var(--primary-glow);
+  transition: var(--transition);
+}
+
+.btn-intro-enter:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.38);
+}
