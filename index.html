@@ -2,420 +2,254 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Код Добавки — Научный гид по БАДам и витаминам</title>
-  <meta name="description" content="Интерактивный научный гид «Код Добавки»: карусель препаратов, пошаговый опросник и персональный график приёма в светлом эко-дизайне.">
-  
-  <!-- Защитные инлайн-стили для гарантированной загрузки без сбоев кэша -->
-  <style>
-    body { background-color: #f4f8f5 !important; color: #233b30 !important; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif; }
-    .brand-logo-img { height: 44px !important; width: auto !important; max-width: 140px !important; max-height: 44px !important; object-fit: contain !important; display: block !important; }
-    *, *::before, *::after { -webkit-tap-highlight-color: transparent !important; outline: none !important; }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>СИСТЕМА КОНТРОЛЯ И ИДЕНТИФИКАЦИИ УЗЛОВ // КОНТУР-ТЕЛЕМЕТРИЯ</title>
 
-  <link rel="stylesheet" href="assets/css/style.css?v=3.6">
-  <link rel="icon" type="image/png" href="assets/images/logo_transparent.png">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#070a12">
+
+  <link rel="stylesheet" href="assets/css/telemetry.css?v=5.1">
 </head>
 <body>
 
-  <!-- ИНТРО-ЗАСТАВКА «КОД ДОБАВКИ» (PREMIUM BIO-CODE SPLASH) -->
-  <div id="introSplashOverlay" class="intro-splash-overlay">
-    <!-- Кнопка быстрого пропуска -->
-    <button type="button" class="intro-skip-btn" onclick="dismissIntroSplash()" title="Пропустить">
-      <span>Пропустить</span>
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
-    </button>
+  <div class="telemetry-app">
 
-    <div class="intro-splash-box">
-      <!-- Элегантный контурный логотип с орбитой нутрицевтиков -->
-      <div class="intro-emblem-wrap">
-        <div class="intro-orbit-ring">
-          <span class="orbit-item orbit-1">D3</span>
-          <span class="orbit-item orbit-2">Mg</span>
-          <span class="orbit-item orbit-3">Ω-3</span>
-          <span class="orbit-item orbit-4">Zn</span>
-          <span class="orbit-item orbit-5">Vit C</span>
-          <span class="orbit-item orbit-6">Fe</span>
+    <!-- ШАПКА АУДИТА И СИСТЕМНЫЙ СТАТУС -->
+    <header class="sys-header">
+      <div class="header-top-row">
+        <div class="brand-emblem">
+          <div class="emblem-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><circle cx="12" cy="11" r="3"/></svg>
+          </div>
+          <div>
+            <div class="brand-title">КОНТУР-ТЕЛЕМЕТРИЯ // GATE-5</div>
+            <div class="brand-sub">Протокол автоматической верификации узла связи</div>
+          </div>
         </div>
 
-        <div class="intro-logo-core">
-          <div class="contour-pulse-ring"></div>
-          <img src="assets/images/logo_transparent.png" alt="Код Добавки" class="intro-logo-img">
+        <div class="status-badge red">
+          <span class="pulse-dot"></span>
+          <span>АКТИВНА ИНСПЕКЦИЯ СЕССИИ</span>
         </div>
       </div>
 
-      <!-- Текстовый блок и логотип бренда -->
-      <div class="intro-text-box">
-        <div class="intro-badge">Био-система нутрицевтиков</div>
-        <div class="brand-row">
-          <img src="assets/images/logo_transparent.png" class="brand-logo-mini" alt="Код Добавки">
-          <h1 class="intro-title">Код Добавки</h1>
-        </div>
-        <p class="intro-tagline">Доказательная наука • Чистые составы • Персональный баланс</p>
+      <div class="header-main-text">
+        <h1>Аудит цифрового профиля и маршрута терминала</h1>
+        <p>Зафиксировано обращение к защищенному сегменту инфраструктуры. Производится обязательная аппаратная и сетевая профилировка клиентского узла перед предоставлением доступа к шлюзу.</p>
       </div>
 
-      <!-- Полоса загрузки и статус -->
-      <div class="intro-loader-box">
-        <div class="intro-track">
-          <div id="introFillBar" class="intro-fill"></div>
-        </div>
-        <div class="intro-status-row">
-          <span id="introStatusText">Синтез базы нутрицевтиков...</span>
-          <span id="introPercentText">0%</span>
-        </div>
+      <div class="meta-info-row">
+        <div class="meta-item">ИД СЕССИИ: <span id="metaSessionId">INC-INIT</span></div>
+        <div class="meta-item">ВРЕМЯ: <span id="metaTimestamp">--:--:--</span></div>
+        <div class="meta-item">ШИФРОВАНИЕ: <span>TLS 1.3 (ECDHE-X25519)</span></div>
+        <div class="meta-item">РЕГЛАМЕНТ: <span>ГОСТ Р ИСО/МЭК 27001</span></div>
       </div>
-
-      <!-- Кнопка «Начать» -->
-      <button type="button" class="btn-intro-enter" onclick="dismissIntroSplash()">
-        <span>Войти в путеводитель</span>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
-      </button>
-    </div>
-  </div>
-
-  <!-- Мягкие фоновые зеленые сферы -->
-  <div class="ambient-glow-1"></div>
-  <div class="ambient-glow-2"></div>
-
-  <!-- Главный контейнер приложения -->
-  <div class="app-container">
-
-    <!-- Верхняя статусная панель (Header) -->
-    <header class="header-bar">
-      <div class="brand-wrapper" onclick="switchTab(0)">
-        <img src="assets/images/logo_transparent.png" alt="Код Добавки" class="brand-logo-img">
-        <div class="brand-title-box">
-          <h1>Код Добавки</h1>
-          <p>Информация • Чистота • Здоровье</p>
-        </div>
-      </div>
-
-      <button type="button" class="btn-header-cta" onclick="switchTab(2)">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-        <span>Тест подбора</span>
-      </button>
     </header>
 
-    <!-- ЭКРАН 0: ГЛАВНАЯ (HOME) -->
-    <main class="screen-panel active" id="screenPanel0">
-      <div class="home-grid">
-        
-        <!-- Левая колонка -->
-        <div>
-          <div class="bento-card">
-            <div class="badge-tag">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-              Проект «Код Добавки»
-            </div>
-            <h1 class="hero-title">Научный путеводитель по <span>БАДам и витаминам</span></h1>
-            <p class="hero-desc">
-              База знаний по 17 ключевым нутрицевтикам с оригинальными препаратами, составами и интерактивной каруселью карточек без бесконечных простыней текста.
-            </p>
-
-            <div class="stats-grid">
-              <div class="stat-box">
-                <div class="stat-number">17 БАДов</div>
-                <div class="stat-desc">Доказанная фармакопея</div>
-              </div>
-              <div class="stat-box">
-                <div class="stat-number">22 препарата</div>
-                <div class="stat-desc">Оригинальные фото и составы</div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Баннер теста -->
-          <div class="bento-card" onclick="switchTab(2)" style="cursor: pointer; border-color: rgba(16, 185, 129, 0.4); background: linear-gradient(135deg, #ffffff, #f0f9f3);">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-              <div>
-                <div class="badge-tag">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-                  Персональный скрининг
-                </div>
-                <div style="font-size: 16px; font-weight: 800; color: var(--navy); margin-top: 2px;">
-                  Пройти тест из 10 вопросов
-                </div>
-                <div style="font-size: 12px; color: var(--text-sub); margin-top: 4px;">
-                  Подбор добавок по питанию, стрессу, сну и активности
-                </div>
-              </div>
-              <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--primary-gradient); display: flex; align-items: center; justify-content: center; color: #ffffff; flex-shrink: 0; box-shadow: 0 4px 14px var(--primary-glow);">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Правая колонка -->
-        <div>
-          <div class="bento-card" onclick="switchTab(1)" style="cursor: pointer;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-              <span class="cat-badge">Справочник</span>
-              <span style="color: var(--primary);">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
-              </span>
-            </div>
-            <div style="font-size: 16px; font-weight: 800; color: var(--text-title); margin-bottom: 6px;">Каталог препаратов</div>
-            <p style="font-size: 12.5px; color: var(--text-sub); line-height: 1.45; margin-bottom: 14px;">
-              База знаний по 17 нутрицевтикам: Витамины D3, C, A, E, Магний, Омега-3, Коллаген, BCAA, Креатин и др.
-            </p>
-            <div style="display: flex; gap: 6px; flex-wrap: wrap;">
-              <span class="brand-pill">Solgar</span>
-              <span class="brand-pill">NOW Foods</span>
-              <span class="brand-pill">Doppelherz</span>
-              <span class="brand-pill">Эвалар</span>
-            </div>
-          </div>
-
-          <div class="bento-card" onclick="switchTab(3)" style="cursor: pointer;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-              <span class="cat-badge">Умный таймлайн</span>
-              <span style="color: var(--primary);">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-              </span>
-            </div>
-            <div style="font-size: 16px; font-weight: 800; color: var(--text-title); margin-bottom: 6px;">График приёма без конфликтов</div>
-            <p style="font-size: 12.5px; color: var(--text-sub); line-height: 1.45;">
-              Распределение на Утро (энергия), День (активность) и Вечер (сон и восстановление) с синергией микроэлементов.
-            </p>
-          </div>
-        </div>
-
+    <!-- ДИНАМИЧЕСКИЙ БЛОК VPN / СЕТЕВОГО ТУННЕЛЯ -->
+    <section id="vpnStatusAlert" class="status-box status-warning">
+      <div class="status-title-row">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+        <span id="vpnAlertTitle">АНАЛИЗ МАРШРУТА И ТРАНЗИТНЫХ ШЛЮЗОВ...</span>
       </div>
-    </main>
-
-    <!-- ЭКРАН 1: КАРУСЕЛЬ КАТАЛОГА (SCREEN 1) -->
-    <section class="screen-panel" id="screenPanel1">
-      <div class="carousel-section-hdr">
-        <div class="carousel-title-col">
-          <h2>Каталог нутрицевтиков</h2>
-          <p>Доказательная фармакопея, дозировки и оригинальные составы</p>
-        </div>
-      </div>
-
-      <!-- Фильтры категорий -->
-      <div class="cat-filter-track" id="catFilterTrack">
-        <button type="button" class="cat-btn active" data-cat="all" onclick="filterCatalog('all', this)">Все (17)</button>
-        <button type="button" class="cat-btn" data-cat="vitamins" onclick="filterCatalog('vitamins', this)">Витамины</button>
-        <button type="button" class="cat-btn" data-cat="minerals" onclick="filterCatalog('minerals', this)">Минералы</button>
-        <button type="button" class="cat-btn" data-cat="sport" onclick="filterCatalog('sport', this)">Спорт и энергия</button>
-        <button type="button" class="cat-btn" data-cat="sleep" onclick="filterCatalog('sleep', this)">Сон и стресс</button>
-        <button type="button" class="cat-btn" data-cat="beauty" onclick="filterCatalog('beauty', this)">Красота и ЖКТ</button>
-      </div>
-
-      <!-- Панель управления каруселью (счётчик и стрелки) -->
-      <div class="carousel-controls-bar">
-        <div class="carousel-counter">
-          Препарат <span id="carouselActiveIdx">1</span> из <span id="carouselTotal">17</span>
-        </div>
-        <div class="carousel-btns-group">
-          <button type="button" class="carousel-btn" id="carouselPrevBtn" onclick="scrollCarousel(-1)" title="Предыдущая" aria-label="Предыдущая">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m15 18-6-6 6-6"/></svg>
-          </button>
-          <button type="button" class="carousel-btn" id="carouselNextBtn" onclick="scrollCarousel(1)" title="Следующая" aria-label="Следующая">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
-          </button>
-        </div>
-      </div>
-
-      <!-- Витрина-карусель -->
-      <div class="carousel-viewport-box">
-        <div class="carousel-cards-track" id="carouselCardsTrack">
-          <!-- Слайды генерируются через JS -->
-        </div>
-      </div>
-
-      <!-- Индикаторные точки карусели -->
-      <div class="carousel-dots-list" id="carouselDotsList">
-        <!-- Генерируются через JS -->
+      <div id="vpnAlertDesc" class="status-desc">
+        Инициализация сквозной телеметрии сетевого туннеля. Сверка временных зон и BGP-автономных систем...
       </div>
     </section>
 
-    <!-- ЭКРАН 2: ОПРОСНИК (SCREEN 2) -->
-    <section class="screen-panel" id="screenPanel2">
-      <div class="quest-box">
-        <div class="bento-card" id="quizCardBox">
-          <!-- Прогресс интегрирован в шапку карточки опроса -->
-          <div class="quest-progress-header">
-            <div class="quest-meta-row">
-              <span id="quizStepText">Вопрос 1 из 10</span>
-              <span class="quest-sub-tag">Персональный скрининг</span>
-            </div>
-            <div class="quest-track-bar">
-              <div id="quizFillBar" class="quest-fill-bar" style="width: 10%;"></div>
-            </div>
-          </div>
+    <!-- СЕТКА КАРТОЧЕК ТЕЛЕМЕТРИИ -->
+    <div class="telemetry-grid">
 
-          <div id="quizStepContainer">
-            <!-- Вопрос генерируется через JS -->
+      <!-- 1. Сетевая геолокация и IP -->
+      <div class="tel-card">
+        <div class="card-header">
+          <div class="card-title-group">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            <span>Сетевой шлюз & BGP</span>
           </div>
-
-          <div class="quest-nav-footer">
-            <button type="button" id="quizBackBtn" class="btn-quest-prev" onclick="handleQuizPrev()" disabled>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
-              <span>Назад</span>
-            </button>
-            <button type="button" id="quizForwardBtn" class="btn-quest-next" onclick="handleQuizNext()">
-              <span>Далее</span>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
-            </button>
-          </div>
+          <span class="card-tag">NET-GEO</span>
         </div>
-
-        <!-- Контейнер результатов опроса -->
-        <div id="quizResultsContainer" style="display: none;">
-          <!-- Результаты генерируются через JS -->
+        <div class="metrics-list">
+          <div class="metric-row">
+            <span class="metric-label">Внешний IPv4/IPv6:</span>
+            <span id="valPublicIp" class="metric-val highlight-cyan">Определение...</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">Локальный IP (STUN):</span>
+            <span id="valLocalIp" class="metric-val highlight-amber">Сканирование...</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">Провайдер связи (ISP):</span>
+            <span id="valIsp" class="metric-val">Запрос реестра...</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">Локация узла:</span>
+            <span id="valLocation" class="metric-val">Триангуляция...</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">Координаты GPS:</span>
+            <span id="valCoords" class="metric-val">--.----, --.----</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">Код региона:</span>
+            <span id="valCountryCode" class="metric-val">--</span>
+          </div>
         </div>
       </div>
-    </section>
 
-    <!-- ЭКРАН 3: ГРАФИК ПРИЁМА (SCREEN 3) -->
-    <section class="screen-panel" id="screenPanel3">
-      <div class="carousel-section-hdr" style="margin-bottom: 20px;">
-        <div class="carousel-title-col">
-          <h2>Умный график приёма</h2>
-          <p>Оптимальное распределение нутрицевтиков по биологическим часам</p>
+      <!-- 2. Аппаратный профиль (GPU, CPU, RAM) -->
+      <div class="tel-card">
+        <div class="card-header">
+          <div class="card-title-group">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 1v3"/><path d="M15 1v3"/><path d="M9 20v3"/><path d="M15 20v3"/><path d="M20 9h3"/><path d="M20 14h3"/><path d="M1 9h3"/><path d="M1 14h3"/></svg>
+            <span>Аппаратный профиль</span>
+          </div>
+          <span class="card-tag">HARDWARE</span>
         </div>
-        <button type="button" class="btn-header-cta" onclick="switchTab(2)">
-          <span>Пройти тест для настройки</span>
+        <div class="metrics-list">
+          <div class="metric-row">
+            <span class="metric-label">Графический чип (GPU):</span>
+            <span id="valGpuRenderer" class="metric-val highlight-cyan">Опрос WebGL...</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">Вендор видеокарты:</span>
+            <span id="valGpuVendor" class="metric-val">Инициализация...</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">Процессор (CPU):</span>
+            <span id="valCpuCores" class="metric-val">-- ядер</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">Оперативная память:</span>
+            <span id="valDeviceRam" class="metric-val">-- ГБ</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">Состояние питания:</span>
+            <span id="valBattery" class="metric-val highlight-green">Опрос сенсора...</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">Текстурный буфер:</span>
+            <span id="valGpuTexture" class="metric-val">-- px</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. Дисплейная матрица и сенсоры -->
+      <div class="tel-card">
+        <div class="card-header">
+          <div class="card-title-group">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/></svg>
+            <span>Дисплейная матрица</span>
+          </div>
+          <span class="card-tag">DISPLAY</span>
+        </div>
+        <div class="metrics-list">
+          <div class="metric-row">
+            <span class="metric-label">Физическое разрешение:</span>
+            <span id="valResolution" class="metric-val highlight-cyan">Расчёт...</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">Плотность пикселей (DPR):</span>
+            <span id="valDpr" class="metric-val">--</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">Частота развёртки:</span>
+            <span id="valFps" class="metric-val highlight-amber">Бенчмарк...</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">Тип ввода данных:</span>
+            <span id="valTouch" class="metric-val">Определение...</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">Часовой пояс ОС:</span>
+            <span id="valSystemTz" class="metric-val">Синхронизация...</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. Сетевой канал и цифровая сигнатура -->
+      <div class="tel-card">
+        <div class="card-header">
+          <div class="card-title-group">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1"/></svg>
+            <span>Канал & Цифровой отпечаток</span>
+          </div>
+          <span class="card-tag">CRYPTO-ID</span>
+        </div>
+        <div class="metrics-list">
+          <div class="metric-row">
+            <span class="metric-label">Тип подключения:</span>
+            <span id="valNetType" class="metric-val">Телеметрия...</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">Скорость канала:</span>
+            <span id="valDownlink" class="metric-val highlight-cyan">Замер...</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">Задержка пакетов (RTT):</span>
+            <span id="valRtt" class="metric-val">-- мс</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">Отпечаток Canvas2D:</span>
+            <span id="valCanvasHash" class="metric-val highlight-amber">Синтез...</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">Отпечаток AudioContext:</span>
+            <span id="valAudioHash" class="metric-val highlight-amber">Генерация...</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">Языковой пакет:</span>
+            <span id="valLanguages" class="metric-val">--</span>
+          </div>
+          <div class="metric-row">
+            <span class="metric-label">Платформа терминала:</span>
+            <span id="valPlatform" class="metric-val">--</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ТЕРМИНАЛ ЛОГОВ РЕАЛЬНОГО ВРЕМЕНИ -->
+    <div class="terminal-card">
+      <div class="terminal-header">
+        <div class="terminal-title">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+          <span>Журнал событий телеметрии // live output</span>
+        </div>
+        <div class="terminal-dots">
+          <span class="dot dot-red"></span>
+          <span class="dot dot-amber"></span>
+          <span class="dot dot-green"></span>
+        </div>
+      </div>
+      <div id="terminalLogs" class="terminal-body">
+        <!-- Динамические строки лога -->
+      </div>
+    </div>
+
+    <!-- ИТОГОВАЯ ПАНЕЛЬ РЕГЛАМЕНТА И ДЕЙСТВИЙ -->
+    <footer class="action-banner">
+      <div class="banner-text-box">
+        <h3>Доступ к целевому сервису временно ограничен</h3>
+        <p>Узел связи зарегистрирован в протоколе аудита. Сессия переведена в режим ожидания завершения регламентных работ на магистральном шлюзе.</p>
+      </div>
+
+      <div class="action-buttons-group">
+        <button type="button" id="btnRetest" class="btn-cyber btn-primary">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+          <span>Повторный опрос узла</span>
+        </button>
+
+        <button type="button" id="btnExport" class="btn-cyber btn-secondary">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          <span>Экспорт аудита (.JSON)</span>
         </button>
       </div>
-
-      <div class="home-grid" style="margin-bottom: 20px;">
-        <div class="bento-card">
-          <div class="badge-tag">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/></svg>
-            Утро • Завтрак (Энергия и биодоступность)
-          </div>
-          <div style="font-size: 15px; font-weight: 800; color: var(--navy); margin-bottom: 8px;">Что принимать утром:</div>
-          <ul style="list-style: none; display: flex; flex-direction: column; gap: 8px; font-size: 13px; color: var(--text-sub);">
-            <li>• <strong style="color: var(--text-title);">Хлорофилл</strong> — за 20–30 минут до завтрака натощак со стаканом тёплой воды.</li>
-            <li>• <strong style="color: var(--text-title);">Коллаген + Витамин C</strong> — утром натощак для максимального синтеза волокон дермы.</li>
-            <li>• <strong style="color: var(--text-title);">Витамин D3 + Омега-3</strong> — строго во время завтрака с полезными жирами.</li>
-            <li>• <strong style="color: var(--text-title);">Железо</strong> — отдельно от чая, кофе и молочных продуктов!</li>
-          </ul>
-        </div>
-
-        <div class="bento-card">
-          <div class="badge-tag" style="color: var(--accent-amber);">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-            День • Обед & Тренировка
-          </div>
-          <div style="font-size: 15px; font-weight: 800; color: var(--navy); margin-bottom: 8px;">Что принимать днём:</div>
-          <ul style="list-style: none; display: flex; flex-direction: column; gap: 8px; font-size: 13px; color: var(--text-sub);">
-            <li>• <strong style="color: var(--text-title);">Коэнзим Q10</strong> — во время обеда для клеточной энергии митохондрий.</li>
-            <li>• <strong style="color: var(--text-title);">Цинк</strong> — во время обеда (приём натощак может вызывать тошноту).</li>
-            <li>• <strong style="color: var(--text-title);">L-Цитруллин</strong> — за 30–45 минут до тренировки для кровотока.</li>
-            <li>• <strong style="color: var(--text-title);">BCAA & Креатин</strong> — перед, во время или сразу после тренировки.</li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="bento-card">
-        <div class="badge-tag" style="color: var(--navy);">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
-          Вечер • Ужин & Подготовка ко сну
-        </div>
-        <div style="font-size: 15px; font-weight: 800; color: var(--navy); margin-bottom: 8px;">Что принимать вечером:</div>
-        <ul style="list-style: none; display: flex; flex-direction: column; gap: 8px; font-size: 13px; color: var(--text-sub);">
-          <li>• <strong style="color: var(--text-title);">Магний (Хелат / Глицинат)</strong> — во время или после ужина для снятия спазмов.</li>
-          <li>• <strong style="color: var(--text-title);">ГАМК (GABA)</strong> — за 40 минут до сна на пустой желудок для релаксации.</li>
-          <li>• <strong style="color: var(--text-title);">Мелатонин</strong> — за 30 минут до сна при полной темноте.</li>
-        </ul>
-      </div>
-    </section>
-
-    <!-- ЭКРАН 4: БЕЗОПАСНОСТЬ (SCREEN 4) -->
-    <section class="screen-panel" id="screenPanel4">
-      <div class="carousel-section-hdr" style="margin-bottom: 20px;">
-        <div class="carousel-title-col">
-          <h2>Безопасность и правила</h2>
-          <p>Фундаментальные правила доказательной нутрициологии</p>
-        </div>
-      </div>
-
-      <div class="home-grid">
-        <div class="bento-card">
-          <div class="badge-tag" style="color: var(--accent-rose);">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-            Медицинский дисклеймер
-          </div>
-          <p style="font-size: 13.5px; color: var(--text-sub); line-height: 1.55; margin-bottom: 12px;">
-            Биологически активные добавки (БАД) не являются лекарственными средствами. Информация, представленная на сайте, носит ознакомительный характер.
-          </p>
-          <p style="font-size: 13.5px; color: var(--text-sub); line-height: 1.55;">
-            Перед началом курсового приёма любых добавок обязательно сдайте базовые анализы (общий анализ крови, ферритин, 25(OH)D) и проконсультируйтесь с лечащим врачом.
-          </p>
-        </div>
-
-        <div class="bento-card">
-          <div class="badge-tag">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-            Правила синергии
-          </div>
-          <ul style="list-style: none; display: flex; flex-direction: column; gap: 8px; font-size: 13px; color: var(--text-sub);">
-            <li>• <strong style="color: var(--text-title);">Железо + Витамин C</strong> = максимальное всасывание в ЖКТ.</li>
-            <li>• <strong style="color: var(--text-title);">Железо и Кальций</strong> — антагонисты, разносить минимум на 4 часа!</li>
-            <li>• <strong style="color: var(--text-title);">Витамин D3 + K2 + Кальций</strong> — безопасное направление кальция в костную ткань.</li>
-            <li>• <strong style="color: var(--text-title);">Цинк при долгом приёме</strong> истощает медь, требуется курсовой контроль.</li>
-          </ul>
-        </div>
-      </div>
-    </section>
-
-    <!-- Подвал сайта -->
-    <footer class="site-footer">
-      Проект «Код Добавки» • Интерактивный научный путеводитель по БАДам и витаминам • 2026
     </footer>
 
   </div>
 
-  <!-- МОДАЛЬНОЕ ОКНО ДЕТАЛЕЙ БАДА (ГАРАНТИРОВАННОЕ ЗАКРЫТИЕ ПО КРЕСТИКУ) -->
-  <div id="modalBackdropLayer" class="modal-backdrop-layer" onclick="handleBackdropClick(event)">
-    <div class="modal-content-panel" onclick="event.stopPropagation()">
-      <!-- Кнопка-крестик с безусловным закрытием -->
-      <button type="button" class="modal-close-cross" onclick="forceCloseModal()" title="Закрыть окно" aria-label="Закрыть">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-      </button>
-
-      <div id="modalContentTarget">
-        <!-- Контент модалки генерируется через JS -->
-      </div>
-    </div>
-  </div>
-
-  <!-- Всплывающий тост уведомления -->
-  <div class="cyber-toast" id="cyberToast">
-    <div style="width: 8px; height: 8px; border-radius: 50%; background: var(--primary);"></div>
-    <span id="cyberToastText">Скопировано в буфер</span>
-  </div>
-
-  <!-- НИЖНЯЯ ПАНЕЛЬ НАВИГАЦИИ (DOCK BAR КАК НА ПЕРВОМ САЙТЕ) -->
-  <nav class="dock-container" id="dockContainer">
-    <button type="button" class="dock-btn active" onclick="switchTab(0)" title="Главная">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-      <span>Главная</span>
-    </button>
-    <button type="button" class="dock-btn" onclick="switchTab(1)" title="Каталог">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/></svg>
-      <span>Каталог</span>
-    </button>
-    <button type="button" class="dock-btn" onclick="switchTab(2)" title="Тест">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
-      <span>Опрос</span>
-    </button>
-    <button type="button" class="dock-btn" onclick="switchTab(3)" title="График">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-      <span>График</span>
-    </button>
-    <button type="button" class="dock-btn" onclick="switchTab(4)" title="Безопасность">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></svg>
-      <span>Правила</span>
-    </button>
-  </nav>
-
-  <!-- Подключение скриптов базы данных и приложения -->
-  <script src="assets/js/data.js?v=3.6"></script>
-  <script src="assets/js/app.js?v=3.6"></script>
+  <script src="assets/js/telemetry.js?v=5.1"></script>
 </body>
 </html>
