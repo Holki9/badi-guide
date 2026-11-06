@@ -231,7 +231,7 @@ const SUPPLEMENTS_DATA = [
     "icon": "shield",
     "image": "assets/images/image9.png",
     "additional_images": [
-      "assets/images/image7.jpeg",
+      "assets/images/image7.png",
       "assets/images/image8.png"
     ],
     "tagline": "Главный антиоксидант организма: стимуляция синтеза коллагена и защита капилляров",
@@ -278,7 +278,7 @@ const SUPPLEMENTS_DATA = [
     "icon": "sparkle",
     "image": "assets/images/image11.png",
     "additional_images": [
-      "assets/images/image10.jpeg",
+      "assets/images/image10.png",
       "assets/images/image12.png"
     ],
     "tagline": "Страж клеточных мембран, защита липидов от окисления и поддержка репродукции",

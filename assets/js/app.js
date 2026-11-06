@@ -44,7 +44,7 @@ function switchTab(idx) {
     else panel.classList.remove('active');
   });
 
-  document.querySelectorAll('.nav-pill-btn').forEach((btn, i) => {
+  document.querySelectorAll('.dock-btn').forEach((btn, i) => {
     if (i === idx) btn.classList.add('active');
     else btn.classList.remove('active');
   });
@@ -374,11 +374,11 @@ function renderQuizStep() {
   if (q.type === 'demographics') {
     html += `
       <div class="gender-row-grid">
-        <div class="quest-choice-card ${surveyAnswers.gender === 'female' ? 'selected' : ''}" onclick="setGender('female')">
+        <div class="quest-choice-card ${surveyAnswers.gender === 'female' ? 'selected' : ''}" onclick="setGender('female', this)">
           <div class="quest-choice-icon">${getIcon('venus')}</div>
           <div class="quest-choice-label">Женский</div>
         </div>
-        <div class="quest-choice-card ${surveyAnswers.gender === 'male' ? 'selected' : ''}" onclick="setGender('male')">
+        <div class="quest-choice-card ${surveyAnswers.gender === 'male' ? 'selected' : ''}" onclick="setGender('male', this)">
           <div class="quest-choice-icon">${getIcon('mars')}</div>
           <div class="quest-choice-label">Мужской</div>
         </div>
@@ -397,7 +397,7 @@ function renderQuizStep() {
     html += `
       <div class="quest-opt-grid">
         ${q.options.map(opt => `
-          <div class="quest-choice-card ${surveyAnswers[key] === opt.id ? 'selected' : ''}" onclick="setSingleOpt('${key}', '${opt.id}')">
+          <div class="quest-choice-card ${surveyAnswers[key] === opt.id ? 'selected' : ''}" onclick="setSingleOpt('${key}', '${opt.id}', this)">
             <div class="quest-choice-icon">${getIcon('check')}</div>
             <div class="quest-choice-body">
               <div class="quest-choice-label">${opt.label}</div>
@@ -438,10 +438,18 @@ function getQuestionKey(id) {
   return map[id] || 'unknown';
 }
 
-function setGender(val) {
+function setGender(val, el) {
   tactileTap();
   surveyAnswers.gender = val;
-  renderQuizStep();
+  if (el) {
+    const parent = el.closest('.gender-row-grid');
+    if (parent) {
+      parent.querySelectorAll('.quest-choice-card').forEach(c => c.classList.remove('selected'));
+      el.classList.add('selected');
+    }
+  } else {
+    renderQuizStep();
+  }
 }
 
 function setAge(val) {
@@ -450,10 +458,18 @@ function setAge(val) {
   if (disp) disp.textContent = `${val} лет`;
 }
 
-function setSingleOpt(key, val) {
+function setSingleOpt(key, val, el) {
   tactileTap();
   surveyAnswers[key] = val;
-  renderQuizStep();
+  if (el) {
+    const parent = el.closest('.quest-opt-grid');
+    if (parent) {
+      parent.querySelectorAll('.quest-choice-card').forEach(c => c.classList.remove('selected'));
+      el.classList.add('selected');
+    }
+  } else {
+    renderQuizStep();
+  }
 }
 
 function toggleMultiOpt(key, val) {
@@ -484,6 +500,13 @@ function handleQuizNext() {
   if (currentStepNumber <= 10) {
     currentStepNumber++;
     renderQuizStep();
+    const box = document.getElementById('quizCardBox');
+    if (box) {
+      const rect = box.getBoundingClientRect();
+      if (rect.top < 60) {
+        box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
   }
 }
 
@@ -492,6 +515,13 @@ function handleQuizPrev() {
   if (currentStepNumber > 1) {
     currentStepNumber--;
     renderQuizStep();
+    const box = document.getElementById('quizCardBox');
+    if (box) {
+      const rect = box.getBoundingClientRect();
+      if (rect.top < 60) {
+        box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
   }
 }
 
@@ -678,13 +708,15 @@ function renderQuizResults() {
           return `
             <div class="quest-choice-card" onclick="openModal('${item.id}')">
               <div class="quest-choice-icon">
-                <img src="${item.image}" alt="${item.name}" style="width: 24px; height: 24px; object-fit: contain;">
+                <img src="${item.image}" alt="${item.name}" style="width: 26px; height: 26px; object-fit: contain;">
               </div>
-              <div class="quest-choice-body">
-                <div class="quest-choice-label">${item.name}</div>
-                <div class="quest-choice-desc">${r.reason}</div>
+              <div class="quest-choice-body" style="min-width: 0;">
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 3px;">
+                  <div class="quest-choice-label" style="white-space: normal; word-break: normal;">${item.name}</div>
+                  <div class="timing-badge">${r.timing.split('(')[0].trim()}</div>
+                </div>
+                <div class="quest-choice-desc" style="white-space: normal; word-break: normal; line-height: 1.4;">${r.reason}</div>
               </div>
-              <div style="font-size: 11px; font-weight: 800; color: var(--primary);">${r.timing.split('(')[0]}</div>
             </div>
           `;
         }).join('')}
@@ -747,14 +779,6 @@ function restartQuiz() {
 document.addEventListener('DOMContentLoaded', () => {
   renderCarouselCards();
   renderQuizStep();
-
-  const search = document.getElementById('carouselSearchInput');
-  if (search) {
-    search.addEventListener('input', (e) => {
-      catalogSearchText = e.target.value.trim();
-      renderCarouselCards();
-    });
-  }
 
   window.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') forceCloseModal();
