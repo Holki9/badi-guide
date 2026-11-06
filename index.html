@@ -13,7 +13,7 @@
     *, *::before, *::after { -webkit-tap-highlight-color: transparent !important; outline: none !important; }
   </style>
 
-  <link rel="stylesheet" href="assets/css/style.css?v=3.4">
+  <link rel="stylesheet" href="assets/css/style.css?v=3.5">
   <link rel="icon" type="image/png" href="assets/images/logo_transparent.png">
 </head>
 <body>
@@ -27,7 +27,7 @@
     </button>
 
     <div class="intro-splash-box">
-      <!-- Анимированный логотип с микроэлементной орбитой -->
+      <!-- Анимированный персонаж (пьёт витамины и улыбается) с орбитой нутрицевтиков -->
       <div class="intro-emblem-wrap">
         <div class="intro-orbit-ring">
           <span class="orbit-item orbit-1">D3</span>
@@ -37,15 +37,82 @@
           <span class="orbit-item orbit-5">Vit C</span>
           <span class="orbit-item orbit-6">Fe</span>
         </div>
-        <div class="intro-logo-core">
-          <img src="assets/images/logo_transparent.png" alt="Код Добавки" class="intro-logo-img">
+
+        <div class="intro-char-core">
+          <svg viewBox="0 0 200 200" class="character-svg" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <radialGradient id="charGlow" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#34d399" stop-opacity="0.35"/>
+                <stop offset="100%" stop-color="#059669" stop-opacity="0.04"/>
+              </radialGradient>
+              <linearGradient id="shirtGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#10b981"/>
+                <stop offset="100%" stop-color="#047857"/>
+              </linearGradient>
+              <linearGradient id="pillGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#fbbf24"/>
+                <stop offset="100%" stop-color="#f59e0b"/>
+              </linearGradient>
+            </defs>
+
+            <!-- Фоновое сияние -->
+            <circle cx="100" cy="100" r="92" fill="url(#charGlow)"/>
+
+            <!-- Искорки жизненного тонуса -->
+            <g class="sparkles-group">
+              <path class="sparkle sp-1" d="M38 42 Q38 50 30 50 Q38 50 38 58 Q38 50 46 50 Q38 50 38 42 Z" fill="#10b981"/>
+              <path class="sparkle sp-2" d="M164 46 Q164 54 156 54 Q164 54 164 62 Q164 54 172 54 Q164 54 164 46 Z" fill="#f59e0b"/>
+              <path class="sparkle sp-3" d="M170 105 Q170 112 163 112 Q170 112 170 119 Q170 112 177 112 Q170 112 170 105 Z" fill="#10b981"/>
+            </g>
+
+            <!-- Тело / плечи -->
+            <path d="M44 195 Q50 148 100 148 Q150 148 156 195 Z" fill="url(#shirtGrad)"/>
+            
+            <!-- Шея -->
+            <rect x="89" y="125" width="22" height="26" rx="4" fill="#fed7aa"/>
+
+            <!-- Голова -->
+            <ellipse cx="100" cy="94" rx="36" ry="40" fill="#fde2cd"/>
+
+            <!-- Румянец на щечках -->
+            <g class="cheeks">
+              <circle cx="75" cy="103" r="7" fill="#f87171"/>
+              <circle cx="125" cy="103" r="7" fill="#f87171"/>
+            </g>
+
+            <!-- Приятные улыбающиеся глаза -->
+            <path d="M73 89 Q81 81 89 89" fill="none" stroke="#0f291e" stroke-width="2.8" stroke-linecap="round"/>
+            <path d="M111 89 Q119 81 127 89" fill="none" stroke="#0f291e" stroke-width="2.8" stroke-linecap="round"/>
+
+            <!-- Искренняя радостная улыбка -->
+            <path class="char-smile" d="M88 109 Q100 126 112 109 Z" fill="#ffffff" stroke="#0f291e" stroke-width="2.5" stroke-linejoin="round"/>
+
+            <!-- Аккуратная стильная прическа -->
+            <path d="M63 94 C60 60 82 48 100 48 C122 48 140 60 137 94 C132 76 122 64 100 64 C78 64 68 76 63 94 Z" fill="#113859"/>
+            <path d="M64 88 C60 100 64 114 67 118 C66 106 68 96 72 90 Z" fill="#113859"/>
+            <path d="M136 88 C140 100 136 114 133 118 C134 106 132 96 128 90 Z" fill="#113859"/>
+
+            <!-- Рука с витаминной капсулой (анимируется ко рту) -->
+            <g class="hand-pill-group">
+              <path d="M148 178 Q138 132 114 118" fill="none" stroke="#fed7aa" stroke-width="11" stroke-linecap="round"/>
+              <circle cx="112" cy="116" r="5" fill="#fed7aa"/>
+              
+              <g class="pill-capsule" transform="translate(108, 110) rotate(-25)">
+                <rect x="-5" y="-10" width="10" height="20" rx="5" fill="url(#pillGrad)" stroke="#d97706" stroke-width="0.8"/>
+                <path d="M-5 0 H5 V5 C5 7.76 2.76 10 0 10 C-2.76 10 -5 7.76 -5 5 Z" fill="#10b981"/>
+              </g>
+            </g>
+          </svg>
         </div>
       </div>
 
-      <!-- Текстовый блок -->
+      <!-- Текстовый блок и логотип бренда -->
       <div class="intro-text-box">
         <div class="intro-badge">Био-система нутрицевтиков</div>
-        <h1 class="intro-title">Код Добавки</h1>
+        <div class="brand-row">
+          <img src="assets/images/logo_transparent.png" class="brand-logo-mini" alt="Код Добавки">
+          <h1 class="intro-title">Код Добавки</h1>
+        </div>
         <p class="intro-tagline">Доказательная наука • Чистые составы • Персональный баланс</p>
       </div>
 
@@ -410,7 +477,7 @@
   </nav>
 
   <!-- Подключение скриптов базы данных и приложения -->
-  <script src="assets/js/data.js?v=3.4"></script>
-  <script src="assets/js/app.js?v=3.4"></script>
+  <script src="assets/js/data.js?v=3.5"></script>
+  <script src="assets/js/app.js?v=3.5"></script>
 </body>
 </html>
